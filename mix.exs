@@ -52,6 +52,10 @@ defmodule BeamBetterHaveMyMoney.MixProject do
       {:gettext, "~> 0.18"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
+      {:httpoison, "~> 1.8"},
+      {:absinthe, "~> 1.7"},
+      {:absinthe_plug, "~> 1.5"},
+      {:absinthe_phoenix, "~> 2.0"},
 
       # tooling
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},

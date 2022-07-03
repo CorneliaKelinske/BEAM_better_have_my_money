@@ -1,20 +1,28 @@
 # BeamBetterHaveMyMoney
 
-To start your Phoenix server:
+##  How to run
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+Install direnv
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+```
+sudo apt install direnv
+```
+(on Ubuntu Linux)
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+Create an .envrc file in the root of your project and put in your api key:
 
-## Learn more
+```
+echo export API_KEY="XXXXXXXXX" > .envrc
+```
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
-# BEAM_better_have_my_money
+Allow direnv
+
+```
+direnv allow
+```
+
+Reload the terminal and run the project
+
+```
+iex -S mix
+```

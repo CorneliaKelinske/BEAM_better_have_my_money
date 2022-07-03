@@ -47,6 +47,14 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+api_key = System.get_env("API_KEY")
+
+config :beam_better_have_my_money,
+  load_from_system_env: true
+
+config :beam_better_have_my_money,
+  api_key: api_key
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
