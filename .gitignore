@@ -32,3 +32,4 @@ beam_better_have_my_money-*.tar
 npm-debug.log
 /assets/node_modules/
 
+.elixir_ls

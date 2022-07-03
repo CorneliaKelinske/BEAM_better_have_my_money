@@ -10,7 +10,14 @@ defmodule BeamBetterHaveMyMoney.MixProject do
       compilers: [:gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      dialyzer: [
+        plt_add_apps: [:ex_unit, :mix],
+        plt_ignore_apps: [:ecto_shorts],
+        list_unused_filters: true,
+        ignore_warnings: ".dialyzer-ignore.exs",
+        flags: [:unmatched_returns, :no_improper_lists]
+      ]
     ]
   end
 
@@ -44,7 +51,13 @@ defmodule BeamBetterHaveMyMoney.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.18"},
       {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+
+      # tooling
+      {:dialyxir, "~> 1.1", only: :dev, runtime: false},
+      {:ex_check, "~> 0.14.0", only: :dev, runtime: false},
+      {:credo, "~> 1.5", only: :dev, runtime: false},
+      {:blitz_credo_checks, "~> 0.1.5", only: [:dev], runtime: false}
     ]
   end
 
