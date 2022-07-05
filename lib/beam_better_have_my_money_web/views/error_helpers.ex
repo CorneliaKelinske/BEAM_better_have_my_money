@@ -1,4 +1,4 @@
-defmodule BeamBetterHaveMyMoneyWeb.ErrorHelpers do
+defmodule BEAMBetterHaveMyMoneyWeb.ErrorHelpers do
   @moduledoc """
   Conveniences for translating and building error messages.
   """
@@ -25,9 +25,9 @@ defmodule BeamBetterHaveMyMoneyWeb.ErrorHelpers do
     # should be written to the errors.po file. The :count option is
     # set by Ecto and indicates we should also apply plural rules.
     if count = opts[:count] do
-      Gettext.dngettext(BeamBetterHaveMyMoneyWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(BEAMBetterHaveMyMoneyWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(BeamBetterHaveMyMoneyWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(BEAMBetterHaveMyMoneyWeb.Gettext, "errors", msg, opts)
     end
   end
 end

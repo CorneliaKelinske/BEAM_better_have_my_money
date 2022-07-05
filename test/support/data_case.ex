@@ -1,4 +1,4 @@
-defmodule BeamBetterHaveMyMoney.DataCase do
+defmodule BEAMBetterHaveMyMoney.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.
@@ -10,7 +10,7 @@ defmodule BeamBetterHaveMyMoney.DataCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use BeamBetterHaveMyMoney.DataCase, async: true`, although
+  by setting `use BEAMBetterHaveMyMoney.DataCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -18,18 +18,18 @@ defmodule BeamBetterHaveMyMoney.DataCase do
 
   using do
     quote do
-      alias BeamBetterHaveMyMoney.Repo
+      alias BEAMBetterHaveMyMoney.Repo
 
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      import BeamBetterHaveMyMoney.DataCase
+      import BEAMBetterHaveMyMoney.DataCase
     end
   end
 
   setup tags do
     pid =
-      Ecto.Adapters.SQL.Sandbox.start_owner!(BeamBetterHaveMyMoney.Repo, shared: not tags[:async])
+      Ecto.Adapters.SQL.Sandbox.start_owner!(BEAMBetterHaveMyMoney.Repo, shared: not tags[:async])
 
     on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
     :ok

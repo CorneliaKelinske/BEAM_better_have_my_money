@@ -1,12 +1,12 @@
-defmodule BeamBetterHaveMyMoneyWeb do
+defmodule BEAMBetterHaveMyMoneyWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
   as controllers, views, channels and so on.
 
   This can be used in your application as:
 
-      use BeamBetterHaveMyMoneyWeb, :controller
-      use BeamBetterHaveMyMoneyWeb, :view
+      use BEAMBetterHaveMyMoneyWeb, :controller
+      use BEAMBetterHaveMyMoneyWeb, :view
 
   The definitions below will be executed for every view,
   controller, etc, so keep them short and clean, focused
@@ -19,11 +19,11 @@ defmodule BeamBetterHaveMyMoneyWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller, namespace: BeamBetterHaveMyMoneyWeb
+      use Phoenix.Controller, namespace: BEAMBetterHaveMyMoneyWeb
 
       import Plug.Conn
-      import BeamBetterHaveMyMoneyWeb.Gettext
-      alias BeamBetterHaveMyMoneyWeb.Router.Helpers, as: Routes
+      import BEAMBetterHaveMyMoneyWeb.Gettext
+      alias BEAMBetterHaveMyMoneyWeb.Router.Helpers, as: Routes
     end
   end
 
@@ -31,7 +31,7 @@ defmodule BeamBetterHaveMyMoneyWeb do
     quote do
       use Phoenix.View,
         root: "lib/beam_better_have_my_money_web/templates",
-        namespace: BeamBetterHaveMyMoneyWeb
+        namespace: BEAMBetterHaveMyMoneyWeb
 
       # Import convenience functions from controllers
       import Phoenix.Controller,
@@ -54,7 +54,7 @@ defmodule BeamBetterHaveMyMoneyWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import BeamBetterHaveMyMoneyWeb.Gettext
+      import BEAMBetterHaveMyMoneyWeb.Gettext
     end
   end
 
@@ -63,9 +63,9 @@ defmodule BeamBetterHaveMyMoneyWeb do
       # Import basic rendering functionality (render, render_layout, etc)
       import Phoenix.View
 
-      import BeamBetterHaveMyMoneyWeb.ErrorHelpers
-      import BeamBetterHaveMyMoneyWeb.Gettext
-      alias BeamBetterHaveMyMoneyWeb.Router.Helpers, as: Routes
+      import BEAMBetterHaveMyMoneyWeb.ErrorHelpers
+      import BEAMBetterHaveMyMoneyWeb.Gettext
+      alias BEAMBetterHaveMyMoneyWeb.Router.Helpers, as: Routes
     end
   end
 

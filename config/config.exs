@@ -8,13 +8,13 @@
 import Config
 
 config :beam_better_have_my_money,
-  ecto_repos: [BeamBetterHaveMyMoney.Repo]
+  ecto_repos: [BEAMBetterHaveMyMoney.Repo]
 
 # Configures the endpoint
-config :beam_better_have_my_money, BeamBetterHaveMyMoneyWeb.Endpoint,
+config :beam_better_have_my_money, BEAMBetterHaveMyMoneyWeb.Endpoint,
   url: [host: "localhost"],
-  render_errors: [view: BeamBetterHaveMyMoneyWeb.ErrorView, accepts: ~w(json), layout: false],
-  pubsub_server: BeamBetterHaveMyMoney.PubSub,
+  render_errors: [view: BEAMBetterHaveMyMoneyWeb.ErrorView, accepts: ~w(json), layout: false],
+  pubsub_server: BEAMBetterHaveMyMoney.PubSub,
   live_view: [signing_salt: "zlhjvFcr"]
 
 # Configures the mailer
@@ -24,7 +24,7 @@ config :beam_better_have_my_money, BeamBetterHaveMyMoneyWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :beam_better_have_my_money, BeamBetterHaveMyMoney.Mailer, adapter: Swoosh.Adapters.Local
+config :beam_better_have_my_money, BEAMBetterHaveMyMoney.Mailer, adapter: Swoosh.Adapters.Local
 
 # Swoosh API client is needed for adapters other than SMTP.
 config :swoosh, :api_client, false

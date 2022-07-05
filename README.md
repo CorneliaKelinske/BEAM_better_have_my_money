@@ -1,4 +1,4 @@
-# BeamBetterHaveMyMoney
+# BEAMBetterHaveMyMoney
 
 ##  How to run
 

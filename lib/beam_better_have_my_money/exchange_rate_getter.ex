@@ -1,15 +1,31 @@
-defmodule BeamBetterHaveMyMoney.ExchangeRateGetter do
+defmodule BEAMBetterHaveMyMoney.ExchangeRateGetter do
   @moduledoc false
 
-  def request_exchange_rate() do
-    HTTPoison.get("localhost:4001/query", [],
-      params: [
-        function: "CURRENCY_EXCHANGE_RATE",
-        from_currency: "CAD",
-        to_currency: "EUR"
+  def query_api_and_decode_json_response(from_currency, to_currency) do
+    with {:ok, body} <- request_exchange_rate(from_currency, to_currency),
+         {:ok, data} <- decode_json(body) do
+      {:ok, data}
+    end
+  end
 
-      ]
-    )
+  defp request_exchange_rate(from_currency, to_currency) do
+    case HTTPoison.get("localhost:4001/query", [],
+           params: [
+             function: "CURRENCY_EXCHANGE_RATE",
+             from_currency: from_currency,
+             to_currency: to_currency
+           ]
+         ) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} -> {:ok, body}
+      error -> {:error, inspect(error)}
+    end
+  end
+
+  defp decode_json(body) do
+    case Jason.decode(body) do
+      {:ok, %{"Realtime Currency Exchange Rate" => data}} -> {:ok, data}
+      _ -> {:error, :not_decoded}
+    end
   end
 
   # defp api_key do

@@ -1,4 +1,4 @@
-defmodule BeamBetterHaveMyMoney.MixProject do
+defmodule BEAMBetterHaveMyMoney.MixProject do
   use Mix.Project
 
   def project do
@@ -26,7 +26,7 @@ defmodule BeamBetterHaveMyMoney.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {BeamBetterHaveMyMoney.Application, []},
+      mod: {BEAMBetterHaveMyMoney.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end

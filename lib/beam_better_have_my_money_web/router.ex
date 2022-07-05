@@ -1,11 +1,11 @@
-defmodule BeamBetterHaveMyMoneyWeb.Router do
-  use BeamBetterHaveMyMoneyWeb, :router
+defmodule BEAMBetterHaveMyMoneyWeb.Router do
+  use BEAMBetterHaveMyMoneyWeb, :router
 
   pipeline :api do
     plug :accepts, ["json"]
   end
 
-  scope "/api", BeamBetterHaveMyMoneyWeb do
+  scope "/api", BEAMBetterHaveMyMoneyWeb do
     pipe_through :api
   end
 
@@ -22,7 +22,7 @@ defmodule BeamBetterHaveMyMoneyWeb.Router do
     scope "/" do
       pipe_through [:fetch_session, :protect_from_forgery]
 
-      live_dashboard "/dashboard", metrics: BeamBetterHaveMyMoneyWeb.Telemetry
+      live_dashboard "/dashboard", metrics: BEAMBetterHaveMyMoneyWeb.Telemetry
     end
   end
 
@@ -30,7 +30,7 @@ defmodule BeamBetterHaveMyMoneyWeb.Router do
   #
   # Note that preview only shows emails that were sent by the same
   # node running the Phoenix server.
-  if Mix.env() == :dev do
+  if Mix.env() === :dev do
     scope "/dev" do
       pipe_through [:fetch_session, :protect_from_forgery]
 

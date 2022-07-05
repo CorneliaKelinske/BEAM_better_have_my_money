@@ -1,4 +1,4 @@
-defmodule BeamBetterHaveMyMoneyWeb.Endpoint do
+defmodule BEAMBetterHaveMyMoneyWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :beam_better_have_my_money
 
   # The session will be stored in the cookie and signed,
@@ -44,5 +44,5 @@ defmodule BeamBetterHaveMyMoneyWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
-  plug BeamBetterHaveMyMoneyWeb.Router
+  plug BEAMBetterHaveMyMoneyWeb.Router
 end
