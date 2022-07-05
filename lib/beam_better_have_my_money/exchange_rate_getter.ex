@@ -2,9 +2,8 @@ defmodule BEAMBetterHaveMyMoney.ExchangeRateGetter do
   @moduledoc false
 
   def query_api_and_decode_json_response(from_currency, to_currency) do
-    with {:ok, body} <- request_exchange_rate(from_currency, to_currency),
-         {:ok, data} <- decode_json(body) do
-      {:ok, data}
+    with {:ok, body} <- request_exchange_rate(from_currency, to_currency) do
+      decode_json(body)
     end
   end
 

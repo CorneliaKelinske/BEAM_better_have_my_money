@@ -17,6 +17,8 @@ defmodule BEAMBetterHaveMyMoneyWeb.ChannelCase do
 
   use ExUnit.CaseTemplate
 
+  alias Ecto.Adapters.SQL.Sandbox
+
   using do
     quote do
       # Import conveniences for testing with channels
@@ -29,10 +31,9 @@ defmodule BEAMBetterHaveMyMoneyWeb.ChannelCase do
   end
 
   setup tags do
-    pid =
-      Ecto.Adapters.SQL.Sandbox.start_owner!(BEAMBetterHaveMyMoney.Repo, shared: not tags[:async])
+    pid = Sandbox.start_owner!(BEAMBetterHaveMyMoney.Repo, shared: not tags[:async])
 
-    on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
+    on_exit(fn -> Sandbox.stop_owner(pid) end)
     :ok
   end
 end
