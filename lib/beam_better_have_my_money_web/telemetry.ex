@@ -1,4 +1,5 @@
-defmodule BeamBetterHaveMyMoneyWeb.Telemetry do
+defmodule BEAMBetterHaveMyMoneyWeb.Telemetry do
+  @moduledoc false
   use Supervisor
   import Telemetry.Metrics
 
@@ -65,7 +66,7 @@ defmodule BeamBetterHaveMyMoneyWeb.Telemetry do
     [
       # A module, function and arguments to be invoked periodically.
       # This function must call :telemetry.execute/3 and a metric must be added above.
-      # {BeamBetterHaveMyMoneyWeb, :count_users, []}
+      # {BEAMBetterHaveMyMoneyWeb, :count_users, []}
     ]
   end
 end

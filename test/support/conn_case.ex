@@ -1,4 +1,4 @@
-defmodule BeamBetterHaveMyMoneyWeb.ConnCase do
+defmodule BEAMBetterHaveMyMoneyWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -11,29 +11,32 @@ defmodule BeamBetterHaveMyMoneyWeb.ConnCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use BeamBetterHaveMyMoneyWeb.ConnCase, async: true`, although
+  by setting `use BEAMBetterHaveMyMoneyWeb.ConnCase, async: true`, although
   this option is not recommended for other databases.
   """
 
   use ExUnit.CaseTemplate
+
+  alias Ecto.Adapters.SQL.Sandbox
 
   using do
     quote do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      import BeamBetterHaveMyMoneyWeb.ConnCase
+      import BEAMBetterHaveMyMoneyWeb.ConnCase
 
-      alias BeamBetterHaveMyMoneyWeb.Router.Helpers, as: Routes
+      alias BEAMBetterHaveMyMoneyWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
-      @endpoint BeamBetterHaveMyMoneyWeb.Endpoint
+      @endpoint BEAMBetterHaveMyMoneyWeb.Endpoint
     end
   end
 
   setup tags do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(BeamBetterHaveMyMoney.Repo, shared: not tags[:async])
-    on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
+    pid = Sandbox.start_owner!(BEAMBetterHaveMyMoney.Repo, shared: not tags[:async])
+
+    on_exit(fn -> Sandbox.stop_owner(pid) end)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end

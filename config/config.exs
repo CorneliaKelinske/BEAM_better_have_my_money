@@ -8,13 +8,13 @@
 import Config
 
 config :beam_better_have_my_money,
-  ecto_repos: [BeamBetterHaveMyMoney.Repo]
+  ecto_repos: [BEAMBetterHaveMyMoney.Repo]
 
 # Configures the endpoint
-config :beam_better_have_my_money, BeamBetterHaveMyMoneyWeb.Endpoint,
+config :beam_better_have_my_money, BEAMBetterHaveMyMoneyWeb.Endpoint,
   url: [host: "localhost"],
-  render_errors: [view: BeamBetterHaveMyMoneyWeb.ErrorView, accepts: ~w(json), layout: false],
-  pubsub_server: BeamBetterHaveMyMoney.PubSub,
+  render_errors: [view: BEAMBetterHaveMyMoneyWeb.ErrorView, accepts: ~w(json), layout: false],
+  pubsub_server: BEAMBetterHaveMyMoney.PubSub,
   live_view: [signing_salt: "zlhjvFcr"]
 
 # Configures the mailer
@@ -24,7 +24,7 @@ config :beam_better_have_my_money, BeamBetterHaveMyMoneyWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :beam_better_have_my_money, BeamBetterHaveMyMoney.Mailer, adapter: Swoosh.Adapters.Local
+config :beam_better_have_my_money, BEAMBetterHaveMyMoney.Mailer, adapter: Swoosh.Adapters.Local
 
 # Swoosh API client is needed for adapters other than SMTP.
 config :swoosh, :api_client, false
@@ -46,6 +46,15 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+api_key = System.get_env("API_KEY")
+
+config :beam_better_have_my_money,
+  load_from_system_env: true
+
+config :beam_better_have_my_money,
+  exchange_rate_server: "localhost:4001/query",
+  currencies: ["CAD", "USD", "EUR"]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

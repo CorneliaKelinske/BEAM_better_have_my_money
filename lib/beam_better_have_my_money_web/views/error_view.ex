@@ -1,5 +1,5 @@
-defmodule BeamBetterHaveMyMoneyWeb.ErrorView do
-  use BeamBetterHaveMyMoneyWeb, :view
+defmodule BEAMBetterHaveMyMoneyWeb.ErrorView do
+  use BEAMBetterHaveMyMoneyWeb, :view
 
   # If you want to customize a particular status code
   # for a certain format, you may uncomment below.

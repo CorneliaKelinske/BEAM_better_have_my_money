@@ -1,2 +1,2 @@
 ExUnit.start()
-Ecto.Adapters.SQL.Sandbox.mode(BeamBetterHaveMyMoney.Repo, :manual)
+Ecto.Adapters.SQL.Sandbox.mode(BEAMBetterHaveMyMoney.Repo, :manual)
