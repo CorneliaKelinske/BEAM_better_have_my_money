@@ -1,6 +1,10 @@
 defmodule BEAMBetterHaveMyMoney.Exchanger.ExchangeRateGetter do
   @moduledoc false
 
+  alias BEAMBetterHaveMyMoney.Config
+
+  @exchange_rate_server Config.exchange_rate_server()
+
   @type error :: :not_decoded | String.t()
 
   @spec query_api_and_decode_json_response(String.t(), String.t()) :: {:ok, map} | {:error, error()}
@@ -11,7 +15,7 @@ defmodule BEAMBetterHaveMyMoney.Exchanger.ExchangeRateGetter do
   end
 
   defp request_exchange_rate(from_currency, to_currency) do
-    case HTTPoison.get("localhost:4001/query", [],
+    case HTTPoison.get(@exchange_rate_server, [],
            params: [
              function: "CURRENCY_EXCHANGE_RATE",
              from_currency: from_currency,
@@ -30,7 +34,4 @@ defmodule BEAMBetterHaveMyMoney.Exchanger.ExchangeRateGetter do
     end
   end
 
-  # defp api_key do
-  #   Application.get_env(:beam_better_have_my_money, :api_key)
-  # end
 end

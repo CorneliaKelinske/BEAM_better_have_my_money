@@ -53,7 +53,7 @@ config :beam_better_have_my_money,
   load_from_system_env: true
 
 config :beam_better_have_my_money,
-  api_key: api_key,
+  exchange_rate_server: "localhost:4001/query",
   currencies: ["CAD", "USD", "EUR"]
 
 # Import environment specific config. This must remain at the bottom
