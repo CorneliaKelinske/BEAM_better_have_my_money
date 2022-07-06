@@ -53,7 +53,8 @@ config :beam_better_have_my_money,
   load_from_system_env: true
 
 config :beam_better_have_my_money,
-  api_key: api_key
+  api_key: api_key,
+  currencies: ["CAD", "USD", "EUR"]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
