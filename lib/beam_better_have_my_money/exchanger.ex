@@ -1,29 +1,42 @@
 defmodule BEAMBetterHaveMyMoney.Exchanger do
   @moduledoc """
-  Returns the exchange rate for the
-  entered currencies
+  Regularly queries the API for the exchange rates of
+  all possible currency combinations
   """
-  alias BEAMBetterHaveMyMoney.Config
+  use Task, restart: :permanent
+  require Logger
+
   alias BEAMBetterHaveMyMoney.Exchanger.{ExchangeRate, ExchangeRateGetter}
 
-  @currencies Config.currencies()
-
-  @spec run_query :: [{:ok, ExchangeRate.t()}]| {:error, ExchangeRateGetter.error()}
-  def run_query() do
-  for currency1 <- @currencies,
-      currency2 <- @currencies,
-      currency2 != currency1 do
-        exchange_rate(currency1, currency2)
-      end
-
+  @spec start_link({String.t(), String.t()}) :: {:ok, pid}
+  def start_link({currency1, currency2}) do
+    Task.start_link(__MODULE__, :run, [currency1, currency2])
   end
- 
-  def exchange_rate(from_currency, to_currency) do
-    with {:ok, data} <- ExchangeRateGetter.query_api_and_decode_json_response(from_currency, to_currency) do
-      exchange_rate = ExchangeRate.new(data)
-      {:ok, exchange_rate}
+
+  @spec child_spec({String.t(), String.t()}) ::  Supervisor.child_spec()
+  def child_spec({currency1, currency2}) do
+    %{
+      id: name(currency1, currency2),
+      start: {__MODULE__, :start_link, [{currency1, currency2}]}
+    }
+  end
+
+  @spec run(String.t(), String.t()) :: no_return
+  def run(from_currency, to_currency) do
+    case ExchangeRateGetter.query_api_and_decode_json_response(from_currency, to_currency) do
+      {:ok, data} ->
+        exchange_rate = ExchangeRate.new(data)
+        {:ok, exchange_rate} |> IO.inspect(label: "33", limit: :infinity, charlists: false)
+
+      error ->
+        Logger.error("Exchange rate for #{from_currency} into #{to_currency} not received. Reason: #{inspect(error)}")
     end
+
+    Process.sleep(:timer.seconds(1))
+    run(from_currency, to_currency)
   end
 
-
+  defp name(currency1, currency2) do
+    :"exchanger_#{currency1}_#{currency2}"
+  end
 end
