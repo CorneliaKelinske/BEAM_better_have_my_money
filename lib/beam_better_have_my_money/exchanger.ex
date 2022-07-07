@@ -13,7 +13,7 @@ defmodule BEAMBetterHaveMyMoney.Exchanger do
     Task.start_link(__MODULE__, :run, [currency1, currency2])
   end
 
-  @spec child_spec({String.t(), String.t()}) ::  Supervisor.child_spec()
+  @spec child_spec({String.t(), String.t()}) :: Supervisor.child_spec()
   def child_spec({currency1, currency2}) do
     %{
       id: name(currency1, currency2),
@@ -29,7 +29,9 @@ defmodule BEAMBetterHaveMyMoney.Exchanger do
         {:ok, exchange_rate} |> IO.inspect(label: "33", limit: :infinity, charlists: false)
 
       error ->
-        Logger.error("Exchange rate for #{from_currency} into #{to_currency} not received. Reason: #{inspect(error)}")
+        Logger.error(
+          "Exchange rate for #{from_currency} into #{to_currency} not received. Reason: #{inspect(error)}"
+        )
     end
 
     Process.sleep(:timer.seconds(1))

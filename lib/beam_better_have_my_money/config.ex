@@ -1,4 +1,7 @@
 defmodule BEAMBetterHaveMyMoney.Config do
+  @moduledoc """
+  Fetches the environmental variables from the config.exs file
+  """
   @app :beam_better_have_my_money
 
   @spec currencies :: [String.t()]

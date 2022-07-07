@@ -41,7 +41,7 @@ defmodule BEAMBetterHaveMyMoney.Application do
   def exchangers do
     for currency1 <- @currencies,
         currency2 <- @currencies,
-        currency2 != currency1 do
+        currency2 !== currency1 do
       BEAMBetterHaveMyMoney.Exchanger.child_spec({currency1, currency2})
     end
   end
