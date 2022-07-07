@@ -29,7 +29,7 @@ defmodule BEAMBetterHaveMyMoney.Exchanger do
         {:ok, exchange_rate} |> IO.inspect(label: "33", limit: :infinity, charlists: false)
 
       error ->
-        Logger.error(inspect(error))
+        Logger.error("Exchange rate for #{from_currency} into #{to_currency} not received. Reason: #{inspect(error)}")
     end
 
     Process.sleep(:timer.seconds(1))
