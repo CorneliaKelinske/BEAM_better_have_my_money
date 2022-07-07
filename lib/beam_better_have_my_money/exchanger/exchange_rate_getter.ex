@@ -7,7 +7,8 @@ defmodule BEAMBetterHaveMyMoney.Exchanger.ExchangeRateGetter do
 
   @type error :: :not_decoded | String.t()
 
-  @spec query_api_and_decode_json_response(String.t(), String.t()) :: {:ok, map} | {:error, error()}
+  @spec query_api_and_decode_json_response(String.t(), String.t()) ::
+          {:ok, map} | {:error, error()}
   def query_api_and_decode_json_response(from_currency, to_currency) do
     with {:ok, body} <- request_exchange_rate(from_currency, to_currency) do
       decode_json(body)
@@ -33,5 +34,4 @@ defmodule BEAMBetterHaveMyMoney.Exchanger.ExchangeRateGetter do
       _ -> {:error, :not_decoded}
     end
   end
-
 end
