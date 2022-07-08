@@ -7,6 +7,8 @@ defmodule BEAMBetterHaveMyMoney.Application do
 
   alias BEAMBetterHaveMyMoney.Config
   @currencies Config.currencies()
+  @global_ttl Config.global_ttl()
+  @ttl_check_interval Config.ttl_check_interval()
 
   @impl true
   def start(_type, _args) do
@@ -19,9 +21,16 @@ defmodule BEAMBetterHaveMyMoney.Application do
         # Start the PubSub system
         {Phoenix.PubSub, name: BEAMBetterHaveMyMoney.PubSub},
         # Start the Endpoint (http/https)
-        BEAMBetterHaveMyMoneyWeb.Endpoint
+        BEAMBetterHaveMyMoneyWeb.Endpoint,
         # Start a worker by calling: BEAMBetterHaveMyMoney.Worker.start_link(arg)
         # {BEAMBetterHaveMyMoney.Worker, arg}
+        {ConCache,
+         [
+           name: :exchange_rate_cache,
+           global_ttl: @global_ttl,
+           ttl_check_interval: @ttl_check_interval,
+           touch_on_read: false
+         ]}
       ] ++ exchangers()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
