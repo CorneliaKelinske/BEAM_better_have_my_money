@@ -6,6 +6,7 @@ defmodule BEAMBetterHaveMyMoney.Exchanger do
   use Task, restart: :permanent
   require Logger
 
+  alias BEAMBetterHaveMyMoney.ExchangeRateStorage
   alias BEAMBetterHaveMyMoney.Exchanger.{ExchangeRate, ExchangeRateGetter}
 
   @spec start_link({String.t(), String.t()}) :: {:ok, pid}
@@ -26,7 +27,7 @@ defmodule BEAMBetterHaveMyMoney.Exchanger do
     case ExchangeRateGetter.query_api_and_decode_json_response(from_currency, to_currency) do
       {:ok, data} ->
         exchange_rate = ExchangeRate.new(data)
-        {:ok, exchange_rate} |> IO.inspect(label: "33", limit: :infinity, charlists: false)
+        ExchangeRateStorage.store_exchange_rate(from_currency, to_currency, exchange_rate)
 
       error ->
         Logger.error(
