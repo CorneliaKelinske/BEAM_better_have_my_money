@@ -7,6 +7,8 @@ defmodule BEAMBetterHaveMyMoney.Application do
 
   alias BEAMBetterHaveMyMoney.Config
   @currencies Config.currencies()
+  @global_ttl Config.global_ttl()
+  @ttl_check_interval Config.ttl_check_interval
 
   @impl true
   def start(_type, _args) do
@@ -25,8 +27,8 @@ defmodule BEAMBetterHaveMyMoney.Application do
         {ConCache,
          [
            name: :exchange_rate_cache,
-           global_ttl: 3_000,
-           ttl_check_interval: 1_000,
+           global_ttl: @global_ttl,
+           ttl_check_interval: @ttl_check_interval,
            touch_on_read: false
          ]}
       ] ++ exchangers()
