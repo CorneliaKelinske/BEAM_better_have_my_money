@@ -26,7 +26,7 @@ defmodule BEAMBetterHaveMyMoney.Application do
          [
            name: :exchange_rate_cache,
            global_ttl: 3_000,
-           ttl_check_interval: 3_600_00,
+           ttl_check_interval: 1_000,
            touch_on_read: false
          ]}
       ] ++ exchangers()

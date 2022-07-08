@@ -28,3 +28,6 @@ config :logger, level: :warn
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :beam_better_have_my_money,
+  exchange_rate_getter: BEAMBetterHaveMyMoney.Exchanger.ExchangeRateGetterStub

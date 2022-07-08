@@ -13,4 +13,9 @@ defmodule BEAMBetterHaveMyMoney.Config do
   def exchange_rate_server do
     Application.fetch_env!(@app, :exchange_rate_server)
   end
+
+  @spec exchange_rate_getter :: atom
+  def exchange_rate_getter do
+    Application.fetch_env!(@app, :exchange_rate_getter)
+  end
 end

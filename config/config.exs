@@ -54,7 +54,8 @@ config :beam_better_have_my_money,
 
 config :beam_better_have_my_money,
   exchange_rate_server: "localhost:4001/query",
-  currencies: ["CAD", "USD", "EUR"]
+  currencies: ["CAD", "USD", "EUR"],
+  exchange_rate_getter: BEAMBetterHaveMyMoney.Exchanger.ExchangeRateGetter
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
