@@ -8,7 +8,7 @@ defmodule BEAMBetterHaveMyMoney.Application do
   alias BEAMBetterHaveMyMoney.Config
   @currencies Config.currencies()
   @global_ttl Config.global_ttl()
-  @ttl_check_interval Config.ttl_check_interval
+  @ttl_check_interval Config.ttl_check_interval()
 
   @impl true
   def start(_type, _args) do
