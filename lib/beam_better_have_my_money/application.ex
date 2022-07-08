@@ -19,9 +19,16 @@ defmodule BEAMBetterHaveMyMoney.Application do
         # Start the PubSub system
         {Phoenix.PubSub, name: BEAMBetterHaveMyMoney.PubSub},
         # Start the Endpoint (http/https)
-        BEAMBetterHaveMyMoneyWeb.Endpoint
+        BEAMBetterHaveMyMoneyWeb.Endpoint,
         # Start a worker by calling: BEAMBetterHaveMyMoney.Worker.start_link(arg)
         # {BEAMBetterHaveMyMoney.Worker, arg}
+        {ConCache,
+         [
+           name: :exchange_rate_cache,
+           global_ttl: 3_000,
+           ttl_check_interval: 3_600_00,
+           touch_on_read: false
+         ]}
       ] ++ exchangers()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
