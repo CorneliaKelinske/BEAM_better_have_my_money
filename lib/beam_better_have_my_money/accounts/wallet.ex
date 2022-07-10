@@ -20,7 +20,7 @@ defmodule BEAMBetterHaveMyMoney.Accounts.Wallet do
     timestamps()
   end
 
-  @required_params [:currency, :cent_amount]
+  @required_params [:currency, :cent_amount, :user_id]
 
   @spec changeset(t, map) :: Ecto.Changeset.t()
   def changeset(wallet, attrs) do
