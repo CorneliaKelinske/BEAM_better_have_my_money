@@ -10,6 +10,10 @@ import Config
 config :beam_better_have_my_money,
   ecto_repos: [BEAMBetterHaveMyMoney.Repo]
 
+config :ecto_shorts,
+  repo: BEAMBetterHaveMyMoney.Repo,
+  error_module: EctoShorts.Actions.Error
+
 # Configures the endpoint
 config :beam_better_have_my_money, BEAMBetterHaveMyMoneyWeb.Endpoint,
   url: [host: "localhost"],
