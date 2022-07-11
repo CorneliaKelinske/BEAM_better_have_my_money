@@ -5,10 +5,10 @@ defmodule BEAMBetterHaveMyMoney.Accounts.User do
   alias BEAMBetterHaveMyMoney.Accounts.{User, Wallet}
 
   @type t :: %__MODULE__{
-    id: pos_integer | nil,
-    name: String.t() | nil,
-    email: String.t() | nil
-  }
+          id: pos_integer | nil,
+          name: String.t() | nil,
+          email: String.t() | nil
+        }
 
   schema "users" do
     field :email, :string
