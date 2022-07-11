@@ -4,55 +4,24 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
   """
 
   import Ecto.Query, warn: false
-  alias BEAMBetterHaveMyMoney.Repo
+  alias BEAMBetterHaveMyMoney.{Accounts.User, Accounts.Wallet, Repo}
+  alias EctoShorts.Actions
 
-  alias BEAMBetterHaveMyMoney.Accounts.User
+  @type error :: ErrorMessage.t()
 
-  @doc """
-  Returns the list of users.
-
-  ## Examples
-
-      iex> list_users()
-      [%User{}, ...]
-
-  """
-  def list_users do
-    Repo.all(User)
+  @spec all_users(map) :: [User.t()]
+  def all_users(params \\ %{}) do
+    Actions.all(User, params)
   end
 
-  @doc """
-  Gets a single user.
+  @spec find_user(map) :: {:ok, User.t()} | {:error, error}
+  def find_user(params) do
+    Actions.find(User, params)
+  end
 
-  Raises `Ecto.NoResultsError` if the User does not exist.
-
-  ## Examples
-
-      iex> get_user!(123)
-      %User{}
-
-      iex> get_user!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_user!(id), do: Repo.get!(User, id)
-
-  @doc """
-  Creates a user.
-
-  ## Examples
-
-      iex> create_user(%{field: value})
-      {:ok, %User{}}
-
-      iex> create_user(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_user(attrs \\ %{}) do
-    %User{}
-    |> User.changeset(attrs)
-    |> Repo.insert()
+  @spec create_user(map) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  def create_user(params) do
+    Actions.create(User, params)
   end
 
   @doc """
@@ -101,8 +70,6 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
   end
-
-  alias BEAMBetterHaveMyMoney.Accounts.Wallet
 
   @doc """
   Returns the list of wallets.

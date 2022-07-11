@@ -5,12 +5,11 @@ defmodule BEAMBetterHaveMyMoney.Accounts.Wallet do
   alias BEAMBetterHaveMyMoney.Accounts.User
 
   @type t :: %__MODULE__{
-    id: pos_integer | nil,
-    cent_amount: integer | nil,
-    currency: String.t() | nil,
-    user_id: pos_integer | nil
-  }
-
+          id: pos_integer | nil,
+          cent_amount: integer | nil,
+          currency: String.t() | nil,
+          user_id: pos_integer | nil
+        }
 
   schema "wallets" do
     field :cent_amount, :integer
@@ -28,6 +27,5 @@ defmodule BEAMBetterHaveMyMoney.Accounts.Wallet do
     |> cast(attrs, @required_params)
     |> validate_required(@required_params)
     |> unique_constraint([:currency, :user_id])
-
   end
 end

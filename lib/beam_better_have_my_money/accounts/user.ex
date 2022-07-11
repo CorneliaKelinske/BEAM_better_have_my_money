@@ -2,7 +2,7 @@ defmodule BEAMBetterHaveMyMoney.Accounts.User do
   @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
-  alias BEAMBetterHaveMyMoney.Accounts.Wallet
+  alias BEAMBetterHaveMyMoney.Accounts.{User, Wallet}
 
   @type t :: %__MODULE__{
     id: pos_integer | nil,
@@ -20,6 +20,11 @@ defmodule BEAMBetterHaveMyMoney.Accounts.User do
   end
 
   @required_params [:name, :email]
+
+  @spec create_changeset(map) :: Ecto.Changeset.t()
+  def create_changeset(params) do
+    changeset(%User{}, params)
+  end
 
   @spec changeset(t, map) :: Ecto.Changeset.t()
   def changeset(user, attrs) do

@@ -3,34 +3,23 @@ defmodule BEAMBetterHaveMyMoney.AccountsFixtures do
   This module defines test helpers for creating
   entities via the `BEAMBetterHaveMyMoney.Accounts` context.
   """
+  alias BEAMBetterHaveMyMoney.Accounts
 
-  @doc """
-  Generate a user.
-  """
-  def user_fixture(attrs \\ %{}) do
-    {:ok, user} =
-      attrs
-      |> Enum.into(%{
-        email: "some email",
-        name: "some name"
-      })
-      |> BEAMBetterHaveMyMoney.Accounts.create_user()
+  @user_params %{name: "Harry", email: "email@example.com"}
+  @wallet_params %{currency: "CAD", cent_amount: 1_000}
 
-    user
+  def user(_context) do
+    {:ok, user} = Accounts.create_user(@user_params)
+
+    %{user: user}
   end
 
-  @doc """
-  Generate a wallet.
-  """
-  def wallet_fixture(attrs \\ %{}) do
+  def wallet(%{user: user}) do
     {:ok, wallet} =
-      attrs
-      |> Enum.into(%{
-        cent_amount: 42,
-        currency: "some currency"
-      })
-      |> BEAMBetterHaveMyMoney.Accounts.create_wallet()
+      @wallet_params
+      |> Map.merge(%{user_id: user.id})
+      |> Accounts.create_wallet()
 
-    wallet
+    %{wallet: wallet}
   end
 end

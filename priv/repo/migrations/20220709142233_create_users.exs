@@ -7,7 +7,6 @@ defmodule BEAMBetterHaveMyMoney.Repo.Migrations.CreateUsers do
       add :email, :text, null: false
 
       timestamps()
-
     end
 
     create unique_index(:users, [:email])
