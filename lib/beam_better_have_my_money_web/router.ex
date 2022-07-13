@@ -5,9 +5,9 @@ defmodule BEAMBetterHaveMyMoneyWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", BEAMBetterHaveMyMoneyWeb do
+  scope "/" do
     pipe_through :api
-
+    
     forward "/graphql", Absinthe.Plug, schema: BEAMBetterHaveMyMoneyWeb.Schema
 
     if Mix.env() === :dev do
