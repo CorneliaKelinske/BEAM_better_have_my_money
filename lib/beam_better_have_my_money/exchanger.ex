@@ -11,12 +11,12 @@ defmodule BEAMBetterHaveMyMoney.Exchanger do
 
   @exchange_rate_getter Config.exchange_rate_getter()
 
-  @spec start_link({String.t(), String.t()}) :: {:ok, pid}
+  @spec start_link({atom(), atom()}) :: {:ok, pid}
   def start_link({currency1, currency2}) do
     Task.start_link(__MODULE__, :run, [currency1, currency2])
   end
 
-  @spec child_spec({String.t(), String.t()}) :: Supervisor.child_spec()
+  @spec child_spec({atom(), atom()}) :: Supervisor.child_spec()
   def child_spec({currency1, currency2}) do
     %{
       id: name(currency1, currency2),
@@ -24,9 +24,12 @@ defmodule BEAMBetterHaveMyMoney.Exchanger do
     }
   end
 
-  @spec run(String.t(), String.t()) :: no_return
+  @spec run(atom(), atom()) :: no_return
   def run(from_currency, to_currency) do
-    case @exchange_rate_getter.query_api_and_decode_json_response(from_currency, to_currency) do
+    case @exchange_rate_getter.query_api_and_decode_json_response(
+           Atom.to_string(from_currency),
+           Atom.to_string(to_currency)
+         ) do
       {:ok, data} ->
         data
         |> ExchangeRate.new()

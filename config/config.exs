@@ -58,7 +58,7 @@ config :beam_better_have_my_money,
 
 config :beam_better_have_my_money,
   exchange_rate_server: "localhost:4001/query",
-  currencies: ["CAD", "USD", "EUR"],
+  currencies: [:CAD, :USD, :EUR],
   exchange_rate_getter: BEAMBetterHaveMyMoney.Exchanger.ExchangeRateGetter,
   global_ttl: 3_000,
   ttl_check_interval: 1_000
