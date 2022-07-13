@@ -8,5 +8,4 @@ defmodule BEAMBetterHaveMyMoneyWeb.Types.ExchangeRate do
     field :to_currency, non_null(:currency)
     field :rate, non_null(:float)
   end
-
 end

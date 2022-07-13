@@ -8,9 +8,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema do
   import_types BEAMBetterHaveMyMoneyWeb.Types.Wallet
 
   query do
-
   end
-
 
   def context(ctx) do
     source = Dataloader.Ecto.new(BEAMBetterHaveMyMoney.Repo)
@@ -21,5 +19,4 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema do
   def plugins do
     [Absinthe.Middleware.Dataloader] ++ Absinthe.Plugin.defaults()
   end
-
 end

@@ -1,4 +1,4 @@
-defmodule  BEAMBetterHaveMyMoneyWeb.Types.Currency do
+defmodule BEAMBetterHaveMyMoneyWeb.Types.Currency do
   @moduledoc false
   use Absinthe.Schema.Notation
 

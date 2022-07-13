@@ -10,6 +10,5 @@ defmodule BEAMBetterHaveMyMoneyWeb.Types.Wallet do
     field :cent_amount, non_null(:integer)
     field :user_id, non_null(:id)
     field :user, :user, resolve: dataloader(BEAMBetterHaveMyMoney.Accounts, :user)
-
   end
 end

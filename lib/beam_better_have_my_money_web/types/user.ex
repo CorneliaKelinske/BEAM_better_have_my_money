@@ -10,7 +10,6 @@ defmodule BEAMBetterHaveMyMoneyWeb.Types.User do
     field :name, non_null(:string)
     field :email, non_null(:string)
 
-    field :wallets, list_of(:wallet),
-      resolve: dataloader(BEAMBetterHaveMyMoney.Accounts, :wallet)
+    field :wallets, list_of(:wallet), resolve: dataloader(BEAMBetterHaveMyMoney.Accounts, :wallet)
   end
 end

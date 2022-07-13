@@ -10,7 +10,7 @@ defmodule BEAMBetterHaveMyMoney.Exchanger.ExchangeRate do
   @type t :: %__MODULE__{
           from_currency: String.t(),
           to_currency: String.t(),
-          rate: String.t()
+          rate: float()
         }
 
   @spec new(map) :: t()
@@ -22,7 +22,7 @@ defmodule BEAMBetterHaveMyMoney.Exchanger.ExchangeRate do
     %__MODULE__{
       from_currency: from_currency,
       to_currency: to_currency,
-      rate: rate
+      rate: String.to_float(rate)
     }
   end
 end
