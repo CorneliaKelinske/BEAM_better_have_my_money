@@ -13,12 +13,8 @@ defmodule BEAMBetterHaveMyMoney.Exchanger.ExchangeRate do
           rate: float()
         }
 
-  @spec new(map) :: t()
-  def new(%{
-        "1. From_Currency Code" => from_currency,
-        "3. To_Currency Code" => to_currency,
-        "5. Exchange Rate" => rate
-      }) do
+  @spec new(map, atom(), atom()) :: t()
+  def new(%{ "5. Exchange Rate" => rate }, from_currency, to_currency) do
     %__MODULE__{
       from_currency: from_currency,
       to_currency: to_currency,

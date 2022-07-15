@@ -10,10 +10,12 @@ defmodule BEAMBetterHaveMyMoney.Exchanger do
   alias BEAMBetterHaveMyMoney.Exchanger.ExchangeRate
 
   @exchange_rate_getter Config.exchange_rate_getter()
+  @name :exchange_rate_cache
 
-  @spec start_link({atom(), atom()}) :: {:ok, pid}
-  def start_link({currency1, currency2}) do
-    Task.start_link(__MODULE__, :run, [currency1, currency2])
+
+  @spec start_link({atom() | String.t(), atom() | String.t()}) :: {:ok, pid}
+  def start_link({currency1, currency2}, name \\ @name) do
+    Task.start_link(__MODULE__, :run, [currency1, currency2, name])
   end
 
   @spec child_spec({atom(), atom()}) :: Supervisor.child_spec()
@@ -24,16 +26,16 @@ defmodule BEAMBetterHaveMyMoney.Exchanger do
     }
   end
 
-  @spec run(atom(), atom()) :: no_return
-  def run(from_currency, to_currency) do
+  @spec run(atom(), atom(), atom()) :: no_return
+  def run(from_currency, to_currency, name) do
     case @exchange_rate_getter.query_api_and_decode_json_response(
-           Atom.to_string(from_currency),
-           Atom.to_string(to_currency)
+           from_currency,
+           to_currency
          ) do
       {:ok, data} ->
         data
-        |> ExchangeRate.new()
-        |> ExchangeRateStorage.store_exchange_rate()
+        |> ExchangeRate.new(from_currency, to_currency)
+        |> ExchangeRateStorage.store_exchange_rate(name)
 
       error ->
         Logger.error(
@@ -42,7 +44,7 @@ defmodule BEAMBetterHaveMyMoney.Exchanger do
     end
 
     Process.sleep(:timer.seconds(1))
-    run(from_currency, to_currency)
+    run(from_currency, to_currency, name)
   end
 
   defp name(currency1, currency2) do

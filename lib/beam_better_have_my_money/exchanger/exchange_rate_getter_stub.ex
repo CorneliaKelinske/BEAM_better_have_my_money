@@ -12,6 +12,6 @@ defmodule BEAMBetterHaveMyMoney.Exchanger.ExchangeRateGetterStub do
        "1. From_Currency Code" => from_currency,
        "3. To_Currency Code" => to_currency,
        "5. Exchange Rate" => "1.11"
-     }}
+     }} 
   end
 end
