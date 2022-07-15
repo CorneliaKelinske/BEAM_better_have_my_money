@@ -5,7 +5,7 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
 
   import BEAMBetterHaveMyMoney.AccountsFixtures, only: [user: 1, wallet: 1]
   @valid_user_params %{name: "Harry", email: "dresden@example.com"}
-  @valid_wallet_params %{currency: "CAD", cent_amount: 1_000}
+  @valid_wallet_params %{currency: :CAD, cent_amount: 1_000}
   @invalid_user_params %{email: nil, name: nil}
   @invalid_wallet_params %{user_id: nil, currency: nil, cent_amount: nil}
 
@@ -158,8 +158,8 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
     test "returns a list of all wallets matching the given parameter(s)", %{
       user: %{id: id}
     } do
-      assert [%Wallet{user_id: ^id, currency: "CAD", cent_amount: 1_000}] =
-               Accounts.all_wallets(%{currency: "CAD"})
+      assert [%Wallet{user_id: ^id, currency: :CAD, cent_amount: 1_000}] =
+               Accounts.all_wallets(%{currency: :CAD})
     end
   end
 
@@ -182,7 +182,7 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
                 %ErrorMessage{
                   code: :not_found,
                   details: %{
-                    params: %{id: id + 1, currency: "CAD"},
+                    params: %{id: id + 1, currency: :CAD},
                     query: BEAMBetterHaveMyMoney.Accounts.Wallet
                   },
                   message: "no records found"
@@ -196,7 +196,7 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
     test "creates a new wallet when valid params are given", %{user: %{id: id}} do
       create_params = Map.put(@valid_wallet_params, :user_id, id)
 
-      assert {:ok, %Wallet{user_id: ^id, currency: "CAD", cent_amount: 1_000}} =
+      assert {:ok, %Wallet{user_id: ^id, currency: :CAD, cent_amount: 1_000}} =
                Accounts.create_wallet(create_params)
 
       assert [%Wallet{user_id: ^id}] = Repo.all(Wallet)
@@ -205,7 +205,7 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
     test "cannot create two wallets with identical currency for the same user", %{user: %{id: id}} do
       create_params = Map.put(@valid_wallet_params, :user_id, id)
 
-      assert {:ok, %Wallet{user_id: ^id, currency: "CAD", cent_amount: 1_000}} =
+      assert {:ok, %Wallet{user_id: ^id, currency: :CAD, cent_amount: 1_000}} =
                Accounts.create_wallet(create_params)
 
       assert {:error, %Ecto.Changeset{} = changeset} = Accounts.create_wallet(create_params)
@@ -215,12 +215,12 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
     test "can create two wallets with different currencies for the same user", %{user: %{id: id}} do
       create_params = Map.put(@valid_wallet_params, :user_id, id)
 
-      assert {:ok, %Wallet{user_id: ^id, currency: "CAD", cent_amount: 1_000}} =
+      assert {:ok, %Wallet{user_id: ^id, currency: :CAD, cent_amount: 1_000}} =
                Accounts.create_wallet(create_params)
 
-      new_currency_params = Map.put(create_params, :currency, "USD")
+      new_currency_params = Map.put(create_params, :currency, :USD)
 
-      assert {:ok, %Wallet{user_id: ^id, currency: "USD", cent_amount: 1_000}} =
+      assert {:ok, %Wallet{user_id: ^id, currency: :USD, cent_amount: 1_000}} =
                Accounts.create_wallet(new_currency_params)
 
       assert [%Wallet{user_id: ^id}, %Wallet{user_id: ^id}] = Repo.all(Wallet)

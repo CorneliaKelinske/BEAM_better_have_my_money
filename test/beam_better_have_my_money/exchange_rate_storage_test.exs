@@ -4,14 +4,14 @@ defmodule BEAMBetterHaveMyMoney.ExchangeRateStorageTest do
   alias BEAMBetterHaveMyMoney.Exchanger.ExchangeRate
   alias BEAMBetterHaveMyMoney.ExchangeRateStorage
 
-  @test_rate %ExchangeRate{from_currency: "Marbles", to_currency: "Painted Stones", rate: "3"}
+  @test_rate %ExchangeRate{from_currency: :money1, to_currency: :money2, rate: "3"}
 
   describe "store_exchange_rate/1" do
     test "stores an exchange rate and removes it based on a given ttl and ttl interval check time" do
       assert :ok = ExchangeRateStorage.store_exchange_rate(@test_rate)
-      assert "3" === ExchangeRateStorage.get_exchange_rate("Marbles", "Painted Stones")
+      assert "3" === ExchangeRateStorage.get_exchange_rate(:money1, :money2)
       Process.sleep(100)
-      assert nil === ExchangeRateStorage.get_exchange_rate("Marbles", "Painted Stones")
+      assert nil === ExchangeRateStorage.get_exchange_rate(:money1, :money2)
     end
   end
 end

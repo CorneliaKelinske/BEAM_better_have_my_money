@@ -4,6 +4,8 @@ defmodule BEAMBetterHaveMyMoney.Accounts.User do
   import Ecto.Changeset
   alias BEAMBetterHaveMyMoney.Accounts.{User, Wallet}
 
+  @required_params [:name, :email]
+
   @type t :: %__MODULE__{
           id: pos_integer | nil,
           name: String.t() | nil,
@@ -18,8 +20,6 @@ defmodule BEAMBetterHaveMyMoney.Accounts.User do
 
     timestamps()
   end
-
-  @required_params [:name, :email]
 
   @spec create_changeset(map) :: Ecto.Changeset.t()
   def create_changeset(params) do

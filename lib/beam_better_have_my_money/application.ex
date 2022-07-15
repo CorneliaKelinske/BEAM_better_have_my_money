@@ -10,7 +10,6 @@ defmodule BEAMBetterHaveMyMoney.Application do
   @global_ttl Config.global_ttl()
   @ttl_check_interval Config.ttl_check_interval()
 
-
   @impl true
   def start(_type, _args) do
     children =
@@ -26,9 +25,13 @@ defmodule BEAMBetterHaveMyMoney.Application do
         # Start a worker by calling: BEAMBetterHaveMyMoney.Worker.start_link(arg)
         # {BEAMBetterHaveMyMoney.Worker, arg}
 
-         con_cache_child_spec(:exchange_rate_cache, @global_ttl),
-         con_cache_child_spec(:test_cache, 3_000)
-
+        {ConCache,
+         [
+           name: :exchange_rate_cache,
+           global_ttl: @global_ttl,
+           ttl_check_interval: @ttl_check_interval,
+           touch_on_read: false
+         ]}
       ] ++ exchangers()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -51,20 +54,5 @@ defmodule BEAMBetterHaveMyMoney.Application do
         currency2 !== currency1 do
       BEAMBetterHaveMyMoney.Exchanger.child_spec({currency1, currency2})
     end
-  end
-
-  defp con_cache_child_spec(name, global_ttl) do
-    Supervisor.child_spec(
-      {
-        ConCache,
-        [
-          name: name,
-          ttl_check_interval: @ttl_check_interval,
-          global_ttl: global_ttl,
-          touch_on_read: false
-        ]
-      },
-      id: {ConCache, name}
-    )
   end
 end

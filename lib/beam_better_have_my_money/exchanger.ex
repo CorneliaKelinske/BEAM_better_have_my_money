@@ -6,19 +6,21 @@ defmodule BEAMBetterHaveMyMoney.Exchanger do
   use Task, restart: :permanent
   require Logger
 
+  alias BEAMBetterHaveMyMoney.Accounts.Wallet
   alias BEAMBetterHaveMyMoney.{Config, ExchangeRateStorage}
   alias BEAMBetterHaveMyMoney.Exchanger.ExchangeRate
 
   @exchange_rate_getter Config.exchange_rate_getter()
-  @name :exchange_rate_cache
+  @cache_name :exchange_rate_cache
 
+  @type currency :: Wallet.currency()
 
-  @spec start_link({atom() | String.t(), atom() | String.t()}) :: {:ok, pid}
-  def start_link({currency1, currency2}, name \\ @name) do
-    Task.start_link(__MODULE__, :run, [currency1, currency2, name])
+  @spec start_link({currency(), currency()}, atom) :: {:ok, pid}
+  def start_link({currency1, currency2}, cache_name \\ @cache_name) do
+    Task.start_link(__MODULE__, :run, [currency1, currency2, cache_name])
   end
 
-  @spec child_spec({atom(), atom()}) :: Supervisor.child_spec()
+  @spec child_spec({currency(), currency()}) :: Supervisor.child_spec()
   def child_spec({currency1, currency2}) do
     %{
       id: name(currency1, currency2),
@@ -26,8 +28,8 @@ defmodule BEAMBetterHaveMyMoney.Exchanger do
     }
   end
 
-  @spec run(atom(), atom(), atom()) :: no_return
-  def run(from_currency, to_currency, name) do
+  @spec run(currency(), currency(), atom()) :: no_return
+  def run(from_currency, to_currency, cache_name) do
     case @exchange_rate_getter.query_api_and_decode_json_response(
            from_currency,
            to_currency
@@ -35,7 +37,7 @@ defmodule BEAMBetterHaveMyMoney.Exchanger do
       {:ok, data} ->
         data
         |> ExchangeRate.new(from_currency, to_currency)
-        |> ExchangeRateStorage.store_exchange_rate(name)
+        |> ExchangeRateStorage.store_exchange_rate(cache_name)
 
       error ->
         Logger.error(
@@ -44,7 +46,7 @@ defmodule BEAMBetterHaveMyMoney.Exchanger do
     end
 
     Process.sleep(:timer.seconds(1))
-    run(from_currency, to_currency, name)
+    run(from_currency, to_currency, cache_name)
   end
 
   defp name(currency1, currency2) do
