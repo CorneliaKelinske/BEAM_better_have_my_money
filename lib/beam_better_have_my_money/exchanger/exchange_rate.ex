@@ -3,26 +3,25 @@ defmodule BEAMBetterHaveMyMoney.Exchanger.ExchangeRate do
   Representation of the exchange rate info obtained from the
   exchange rate API
   """
+  alias BEAMBetterHaveMyMoney.Accounts.Wallet
+
+  @type currency :: Wallet.currency()
 
   @enforce_keys [:from_currency, :to_currency, :rate]
   defstruct [:from_currency, :to_currency, :rate]
 
   @type t :: %__MODULE__{
-          from_currency: String.t(),
-          to_currency: String.t(),
-          rate: String.t()
+          from_currency: currency(),
+          to_currency: currency,
+          rate: float()
         }
 
-  @spec new(map) :: t()
-  def new(%{
-        "1. From_Currency Code" => from_currency,
-        "3. To_Currency Code" => to_currency,
-        "5. Exchange Rate" => rate
-      }) do
+  @spec new(map, currency(), currency()) :: t()
+  def new(%{"5. Exchange Rate" => rate}, from_currency, to_currency) do
     %__MODULE__{
       from_currency: from_currency,
       to_currency: to_currency,
-      rate: rate
+      rate: String.to_float(rate)
     }
   end
 end

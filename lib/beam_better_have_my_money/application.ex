@@ -24,6 +24,7 @@ defmodule BEAMBetterHaveMyMoney.Application do
         BEAMBetterHaveMyMoneyWeb.Endpoint,
         # Start a worker by calling: BEAMBetterHaveMyMoney.Worker.start_link(arg)
         # {BEAMBetterHaveMyMoney.Worker, arg}
+
         {ConCache,
          [
            name: :exchange_rate_cache,

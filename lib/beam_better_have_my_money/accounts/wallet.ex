@@ -3,23 +3,26 @@ defmodule BEAMBetterHaveMyMoney.Accounts.Wallet do
   use Ecto.Schema
   import Ecto.Changeset
   alias BEAMBetterHaveMyMoney.Accounts.{User, Wallet}
+  alias BEAMBetterHaveMyMoney.Config
 
+  @currencies Config.currencies()
+  @required_params [:currency, :cent_amount, :user_id]
+
+  @type currency :: atom
   @type t :: %__MODULE__{
           id: pos_integer | nil,
           cent_amount: integer | nil,
-          currency: String.t() | nil,
+          currency: currency | nil,
           user_id: pos_integer | nil
         }
 
   schema "wallets" do
     field :cent_amount, :integer
-    field :currency, :string
+    field :currency, Ecto.Enum, values: @currencies
     belongs_to :user, User
 
     timestamps()
   end
-
-  @required_params [:currency, :cent_amount, :user_id]
 
   @spec create_changeset(map) :: Ecto.Changeset.t()
   def create_changeset(params) do
