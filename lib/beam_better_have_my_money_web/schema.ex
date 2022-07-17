@@ -8,9 +8,11 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema do
   import_types BEAMBetterHaveMyMoneyWeb.Types.User
   import_types BEAMBetterHaveMyMoneyWeb.Types.Wallet
   import_types BEAMBetterHaveMyMoneyWeb.Schema.Queries.User
+  import_types BEAMBetterHaveMyMoneyWeb.Schema.Queries.Wallet
 
   query do
     import_fields :user_queries
+    import_fields :wallet_queries
   end
 
   def context(ctx) do

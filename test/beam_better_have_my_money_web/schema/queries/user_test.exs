@@ -23,32 +23,6 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Queries.UserTest do
   """
 
   describe "@users" do
-    test "fetches all users when no query arguments are given", %{
-      user: %{name: name, email: email, id: id}
-    } do
-      user_id = to_string(id)
-
-      assert {
-               :ok,
-               %{
-                 data: %{
-                   "users" => [
-                     %{
-                       "id" => ^user_id,
-                       "name" => ^name,
-                       "email" => ^email,
-                       "wallets" => [
-                         %{
-                           "user_id" => ^user_id
-                         }
-                       ]
-                     }
-                   ]
-                 }
-               }
-             } = Absinthe.run(@all_users_doc, Schema)
-    end
-
     test "fetches users by name", %{
       user: %{name: name, email: email, id: id}
     } do
@@ -72,7 +46,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Queries.UserTest do
                    ]
                  }
                }
-             } = Absinthe.run(@all_users_doc, Schema, variables: %{name: name})
+             } = Absinthe.run(@all_users_doc, Schema, variables: %{"name" => name})
     end
   end
 
@@ -104,9 +78,10 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Queries.UserTest do
                      "name" => ^name,
                      "email" => ^email,
                      "wallets" => [
-                      %{
-                        "user_id" => ^user_id
-                      }]
+                       %{
+                         "user_id" => ^user_id
+                       }
+                     ]
                    }
                  }
                }
