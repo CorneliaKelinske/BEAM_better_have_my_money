@@ -1,5 +1,5 @@
 defmodule BEAMBetterHaveMyMoney.ExchangerTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case
 
   alias BEAMBetterHaveMyMoney.{Exchanger, ExchangeRateStorage}
 

@@ -22,7 +22,7 @@ defmodule BEAMBetterHaveMyMoney.ExchangeRateStorage do
     ConCache.put(name, key(from_currency, to_currency), rate)
   end
 
-  @spec get_exchange_rate(currency(), currency(), atom) :: float()
+  @spec get_exchange_rate(currency(), currency(), atom) :: float() | nil
   def get_exchange_rate(from_currency, to_currency, name \\ @name) do
     ConCache.get(name, key(from_currency, to_currency))
   end

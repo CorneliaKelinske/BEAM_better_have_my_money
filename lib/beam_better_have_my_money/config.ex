@@ -28,4 +28,9 @@ defmodule BEAMBetterHaveMyMoney.Config do
   def ttl_check_interval do
     Application.fetch_env!(@app, :ttl_check_interval)
   end
+
+  @spec exchange_rate_cache :: atom()
+  def exchange_rate_cache do
+    Application.fetch_env!(@app, :exchange_rate_cache)
+  end
 end

@@ -32,4 +32,5 @@ config :phoenix, :plug_init_mode, :runtime
 config :beam_better_have_my_money,
   exchange_rate_getter: BEAMBetterHaveMyMoney.Exchanger.ExchangeRateGetterStub,
   global_ttl: 50,
-  ttl_check_interval: 10
+  ttl_check_interval: 10,
+  exchange_rate_cache: :test_cache
