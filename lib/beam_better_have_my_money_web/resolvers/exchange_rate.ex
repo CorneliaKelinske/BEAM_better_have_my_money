@@ -9,21 +9,25 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.ExchangeRate do
   @type error :: BEAMBetterHaveMyMoney.Accounts.error()
   @type currency :: Wallet.currency()
   @type exchange_rate :: ExchangeRate.t()
+  @type params :: %{from_currency: currency(), to_currency: currency()}
 
-  @spec get_exchange_rate(%{from_currency: currency(), to_currency: currency()}, resolution()) ::
-          {:ok, exchange_rate()} | {:error, error}
+  @spec get_exchange_rate(params, resolution()) :: {:ok, exchange_rate()} | {:error, error}
   def get_exchange_rate(%{from_currency: from_currency, to_currency: from_currency}, _) do
-    {:ok, %{from_currency: from_currency, to_currency: from_currency, rate: 1.00}}
+    {:error,
+     ErrorMessage.bad_request("Please enter two different currencies!", %{
+       from_currency: from_currency,
+       to_currency: from_currency
+     })}
   end
 
   def get_exchange_rate(%{from_currency: from_currency, to_currency: to_currency}, _) do
     case ExchangeRateStorage.get_exchange_rate(from_currency, to_currency, @exchange_rate_cache) do
       nil ->
         {:error,
-         %ErrorMessage{
-           message: "Exchange rate currently not available. Please try again!",
-           code: :not_found
-         }}
+         ErrorMessage.not_found("Exchange rate currently not available. Please try again!", %{
+           from_currency: from_currency,
+           to_currency: to_currency
+         })}
 
       rate ->
         {:ok, %ExchangeRate{from_currency: from_currency, to_currency: to_currency, rate: rate}}

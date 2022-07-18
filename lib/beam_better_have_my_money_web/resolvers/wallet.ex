@@ -3,14 +3,13 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
   alias BEAMBetterHaveMyMoney.{Accounts, Accounts.Wallet}
 
   @type resolution :: Absinthe.Resolution.t()
-  @type error :: BEAMBetterHaveMyMoney.Accounts.error()
 
-  @spec all(map, resolution()) :: {:ok, [Wallet.t()]} | {:error, error}
+  @spec all(map, resolution()) :: {:ok, [Wallet.t()]} | {:error, ErrorMessage.t()}
   def all(params, _) do
     {:ok, Accounts.all_wallets(params)}
   end
 
-  @spec find(map, resolution()) :: {:ok, Wallet.t()} | {:error, error}
+  @spec find(map, resolution()) :: {:ok, Wallet.t()} | {:error, ErrorMessage.t()}
   def find(%{id: _id} = params, _) when map_size(params) === 1 do
     Accounts.find_wallet(params)
   end
@@ -19,11 +18,8 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
     Accounts.find_wallet(params)
   end
 
-  def find(_params, _) do
+  def find(params, _) do
     {:error,
-     %ErrorMessage{
-       message: "Please search either by id or by user_id and currency",
-       code: :bad_request
-     }}
+     ErrorMessage.bad_request("Please search either by id or by user_id and currency", params)}
   end
 end

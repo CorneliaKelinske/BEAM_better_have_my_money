@@ -5,14 +5,17 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema do
 
   import_types BEAMBetterHaveMyMoneyWeb.Types.Currency
   import_types BEAMBetterHaveMyMoneyWeb.Types.ExchangeRate
+  import_types BEAMBetterHaveMyMoneyWeb.Types.TotalWorth
   import_types BEAMBetterHaveMyMoneyWeb.Types.User
   import_types BEAMBetterHaveMyMoneyWeb.Types.Wallet
   import_types BEAMBetterHaveMyMoneyWeb.Schema.Queries.ExchangeRate
+  import_types BEAMBetterHaveMyMoneyWeb.Schema.Queries.TotalWorth
   import_types BEAMBetterHaveMyMoneyWeb.Schema.Queries.User
   import_types BEAMBetterHaveMyMoneyWeb.Schema.Queries.Wallet
 
   query do
     import_fields :exchange_rate_queries
+    import_fields :total_worth_queries
     import_fields :user_queries
     import_fields :wallet_queries
   end

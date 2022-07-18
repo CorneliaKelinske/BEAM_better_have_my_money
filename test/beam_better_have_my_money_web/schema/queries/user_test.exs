@@ -9,17 +9,18 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Queries.UserTest do
 
   @all_users_doc """
   query Users($name: String) {
-  users (name: $name) {
-  id
-  name
-  email
-    wallets {
+    users (name: $name) {
       id
-      user_id
-      currency
-      cent_amount}
+      name
+      email
+      wallets {
+        id
+        user_id
+        currency
+        cent_amount
       }
-      }
+    }
+  }
   """
 
   describe "@users" do
@@ -48,6 +49,11 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Queries.UserTest do
                }
              } = Absinthe.run(@all_users_doc, Schema, variables: %{"name" => name})
     end
+
+    test "returns an empty when no user with the given name exists" do
+      assert {:ok, %{data: %{"users" => []}}} =
+               Absinthe.run(@all_users_doc, Schema, variables: %{"name" => "RANDOM NAME"})
+    end
   end
 
   @find_user_doc """
@@ -60,9 +66,10 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Queries.UserTest do
         id
         user_id
         currency
-        cent_amount}
-        }
+        cent_amount
+      }
     }
+  }
   """
 
   describe "@user" do
@@ -86,6 +93,21 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Queries.UserTest do
                  }
                }
              } = Absinthe.run(@find_user_doc, Schema, variables: %{"email" => email})
+    end
+
+    test "returns an error message when a user with the given email does not exist" do
+      assert {:ok,
+              %{
+                data: %{"user" => nil},
+                errors: [
+                  %{
+                    code: :not_found,
+                    locations: [%{column: 3, line: 2}],
+                    message: "no records found",
+                    path: ["user"]
+                  }
+                ]
+              }} = Absinthe.run(@find_user_doc, Schema, variables: %{"email" => "RandomEmail"})
     end
   end
 end
