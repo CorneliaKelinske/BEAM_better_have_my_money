@@ -33,4 +33,9 @@ defmodule BEAMBetterHaveMyMoney.Config do
   def exchange_rate_cache do
     Application.fetch_env!(@app, :exchange_rate_cache)
   end
+
+  @spec env :: atom()
+  def env do
+    Application.fetch_env!(@app, :env)
+  end
 end

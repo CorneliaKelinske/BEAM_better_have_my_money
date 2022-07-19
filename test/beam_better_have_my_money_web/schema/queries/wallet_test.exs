@@ -64,9 +64,13 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Queries.WalletTest do
              } = Absinthe.run(@all_wallets_doc, Schema, variables: %{"user_id" => id})
     end
 
-    test "returns an empty list when a wallet with the given user_id does not exist", %{user: %{id: id}} do
+    test "returns an empty list when a wallet with the given user_id does not exist", %{
+      user: %{id: id}
+    } do
       user_id = id + 2
-      assert {:ok, %{data: %{"wallets" => []}}} = Absinthe.run(@all_wallets_doc, Schema, variables: %{"user_id" => user_id})
+
+      assert {:ok, %{data: %{"wallets" => []}}} =
+               Absinthe.run(@all_wallets_doc, Schema, variables: %{"user_id" => user_id})
     end
   end
 

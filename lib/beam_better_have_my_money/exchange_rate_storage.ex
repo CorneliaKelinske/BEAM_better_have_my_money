@@ -22,9 +22,20 @@ defmodule BEAMBetterHaveMyMoney.ExchangeRateStorage do
     ConCache.put(name, key(from_currency, to_currency), rate)
   end
 
-  @spec get_exchange_rate(currency(), currency(), atom) :: float() | nil
+  @spec get_exchange_rate(currency(), currency(), atom) ::
+          {:ok, float()} | {:error, ErrorMessage.t()}
   def get_exchange_rate(from_currency, to_currency, name \\ @name) do
-    ConCache.get(name, key(from_currency, to_currency))
+    case ConCache.get(name, key(from_currency, to_currency)) do
+      nil ->
+        {:error,
+         ErrorMessage.not_found("Exchange rate currently not available. Please try again!", %{
+           from_currency: from_currency,
+           to_currency: to_currency
+         })}
+
+      float ->
+        {:ok, float}
+    end
   end
 
   defp key(from_currency, to_currency) do

@@ -33,4 +33,5 @@ config :beam_better_have_my_money,
   exchange_rate_getter: BEAMBetterHaveMyMoney.Exchanger.ExchangeRateGetterStub,
   global_ttl: 50,
   ttl_check_interval: 10,
-  exchange_rate_cache: :test_cache
+  exchange_rate_cache: :test_cache,
+  env: :test

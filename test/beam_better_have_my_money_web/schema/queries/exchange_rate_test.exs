@@ -1,7 +1,7 @@
 defmodule BEAMBetterHaveMyMoneyWeb.Schema.Queries.ExchangeRateTest do
   use BEAMBetterHaveMyMoney.DataCase
 
-  alias BEAMBetterHaveMyMoney.{Exchanger, Exchanger.ExchangeRate, ExchangeRateStorage}
+  alias BEAMBetterHaveMyMoney.{Exchanger.ExchangeRate, ExchangeRateStorage}
   alias BEAMBetterHaveMyMoneyWeb.Schema
 
   setup do

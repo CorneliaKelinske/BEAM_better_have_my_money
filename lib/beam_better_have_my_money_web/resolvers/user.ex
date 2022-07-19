@@ -15,6 +15,6 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.User do
   end
 
   def find(%{user_id: id}, _, _) do
-    Accounts.find_user%{id: id}
+    Accounts.find_user(%{id: id})
   end
 end

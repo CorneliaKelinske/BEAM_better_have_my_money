@@ -6,12 +6,13 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.ExchangeRate do
   @exchange_rate_cache Config.exchange_rate_cache()
 
   @type resolution :: Absinthe.Resolution.t()
-  @type error :: BEAMBetterHaveMyMoney.Accounts.error()
+
   @type currency :: Wallet.currency()
   @type exchange_rate :: ExchangeRate.t()
   @type params :: %{from_currency: currency(), to_currency: currency()}
 
-  @spec get_exchange_rate(params, resolution()) :: {:ok, exchange_rate()} | {:error, error}
+  @spec get_exchange_rate(params, resolution()) ::
+          {:ok, exchange_rate()} | {:error, ErrorMessage.t()}
   def get_exchange_rate(%{from_currency: from_currency, to_currency: from_currency}, _) do
     {:error,
      ErrorMessage.bad_request("Please enter two different currencies!", %{
@@ -21,16 +22,10 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.ExchangeRate do
   end
 
   def get_exchange_rate(%{from_currency: from_currency, to_currency: to_currency}, _) do
-    case ExchangeRateStorage.get_exchange_rate(from_currency, to_currency, @exchange_rate_cache) do
-      nil ->
-        {:error,
-         ErrorMessage.not_found("Exchange rate currently not available. Please try again!", %{
-           from_currency: from_currency,
-           to_currency: to_currency
-         })}
-
-      rate ->
-        {:ok, %ExchangeRate{from_currency: from_currency, to_currency: to_currency, rate: rate}}
+    with {:ok, exchange_rate} <-
+           ExchangeRateStorage.get_exchange_rate(from_currency, to_currency, @exchange_rate_cache) do
+      {:ok,
+       %ExchangeRate{from_currency: from_currency, to_currency: to_currency, rate: exchange_rate}}
     end
   end
 end

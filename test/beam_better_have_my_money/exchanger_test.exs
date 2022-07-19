@@ -14,7 +14,7 @@ defmodule BEAMBetterHaveMyMoney.ExchangerTest do
   describe "run/2" do
     test "retrieves an exchange rate and stores it in the Exchange Rate Storage" do
       Process.sleep(50)
-      assert 1.11 === ExchangeRateStorage.get_exchange_rate(:money1, :money2, :test_cache)
+      assert {:ok, 1.11} === ExchangeRateStorage.get_exchange_rate(:money1, :money2, :test_cache)
     end
   end
 end

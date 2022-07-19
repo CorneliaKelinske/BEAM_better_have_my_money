@@ -10,5 +10,5 @@ defmodule BEAMBetterHaveMyMoneyWeb.Types.TotalWorth do
     field :user_id, non_null(:id)
 
     field :user, non_null(:user), resolve: &Resolvers.User.find/3
-end
+  end
 end
