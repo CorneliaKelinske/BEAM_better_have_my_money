@@ -6,7 +6,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.TotalWorth do
     wallets = Accounts.all_wallets(%{user_id: user_id})
 
     {:ok,
-     %{
+     %{user_id: user_id, currency: target_currency,
        cent_amount:
          Enum.reduce(wallets, 0, fn x, acc ->
            acc + convert_amount(x.cent_amount, x.currency, target_currency)
@@ -20,6 +20,6 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.TotalWorth do
 
   defp convert_amount(cent_amount, currency, target_currency) do
     exchange_rate = ExchangeRateStorage.get_exchange_rate(currency, target_currency)
-    cent_amount * exchange_rate
+    round(cent_amount * exchange_rate)
   end
 end
