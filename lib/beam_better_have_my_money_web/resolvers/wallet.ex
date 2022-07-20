@@ -22,4 +22,9 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
     {:error,
      ErrorMessage.bad_request("Please search either by id or by user_id and currency", params)}
   end
+
+  @spec create_wallet(map, resolution()) :: {:ok, Wallet.t()} | {:error, Ecto.Changeset.t()}
+  def create_wallet(params, _) do
+    Accounts.create_wallet(params)
+  end
 end

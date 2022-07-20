@@ -48,32 +48,29 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.UserTest do
   }
   """
 
+  describe "@update_user" do
+    setup :user
 
-describe "@update_user" do
-  setup :user
+    test "updates a user based on their id", %{user: %{id: id}} do
+      user_id = to_string(id)
 
-  test "updates a user based on their id", %{user: %{id: id}} do
-    user_id = to_string(id)
-
-    assert {
-             :ok,
-             %{
-               data: %{
-                 "updateUser" => %{
-                   "name" => "Horst",
-                   "email" => "horst@example.com",
-                   "id" => ^user_id
+      assert {
+               :ok,
+               %{
+                 data: %{
+                   "updateUser" => %{
+                     "name" => "Horst",
+                     "email" => "horst@example.com",
+                     "id" => ^user_id
+                   }
                  }
                }
-             }
-           } =
-             Absinthe.run(@update_user_doc, Schema,
-               variables: %{"id" => user_id, "name" => "Horst", "email" => "horst@example.com"}
-             )
+             } =
+               Absinthe.run(@update_user_doc, Schema,
+                 variables: %{"id" => user_id, "name" => "Horst", "email" => "horst@example.com"}
+               )
 
-    assert {:ok, %{name: "Horst"}} = Accounts.find_user(%{id: id})
+      assert {:ok, %{name: "Horst"}} = Accounts.find_user(%{id: id})
+    end
   end
-end
-
-
 end
