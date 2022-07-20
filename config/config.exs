@@ -61,7 +61,8 @@ config :beam_better_have_my_money,
   currencies: [:CAD, :USD, :EUR],
   exchange_rate_getter: BEAMBetterHaveMyMoney.Exchanger.ExchangeRateGetter,
   global_ttl: 3_000,
-  ttl_check_interval: 1_000
+  ttl_check_interval: 1_000,
+  exchange_rate_cache: :exchange_rate_cache
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

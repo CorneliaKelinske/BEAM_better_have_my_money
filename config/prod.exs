@@ -15,6 +15,9 @@ config :beam_better_have_my_money, BEAMBetterHaveMyMoneyWeb.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
+config :beam_better_have_my_money,
+  env: :prod
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key
