@@ -46,7 +46,6 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Queries.TotalWorthTest do
       user_id = to_string(id)
       net_worth = cent_amount * 2 + cent_amount2
 
-
       assert {:ok,
               %{
                 data: %{

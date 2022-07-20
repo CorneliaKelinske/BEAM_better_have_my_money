@@ -5,9 +5,10 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.TotalWorth do
   @type resolution :: Absinthe.Resolution.t()
   @type currency :: Wallet.currency()
   @type total_worth :: %{user_id: non_neg_integer(), currency: currency(), cent_amount: integer()}
+  @type params :: %{user_id: non_neg_integer(), currency: currency}
 
-  @env Config.env()
-
+  @spec get_total_worth(params(), resolution()) ::
+          {:ok, total_worth()} | {:error, ErrorMessage.t()}
   def get_total_worth(%{user_id: user_id, currency: target_currency}, _) do
     acc = {:ok, 0, target_currency}
 
@@ -44,7 +45,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.TotalWorth do
   end
 
   defp cache_name do
-    case @env do
+    case Config.env() do
       :test -> :test_cache
       _ -> :exchange_rate_cache
     end
