@@ -17,7 +17,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.Wallet do
     field :deposit_amount, :wallet do
       arg :user_id, non_null(:id)
       arg :currency, non_null(:currency)
-      arg :cent_amount, non_null(:integer)
+      arg :cent_amount, non_null(:integer), description: "must be positive"
 
       resolve &Resolvers.Wallet.deposit_amount/2
     end
@@ -26,7 +26,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.Wallet do
     field :withdraw_amount, :wallet do
       arg :user_id, non_null(:id)
       arg :currency, non_null(:currency)
-      arg :cent_amount, non_null(:integer)
+      arg :cent_amount, non_null(:integer), description: "must be positive"
 
       resolve &Resolvers.Wallet.withdraw_amount/2
     end

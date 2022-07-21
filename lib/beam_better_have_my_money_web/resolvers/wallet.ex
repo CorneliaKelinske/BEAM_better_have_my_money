@@ -29,14 +29,28 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
   end
 
   @spec deposit_amount(map, resolution()) :: {:ok, Wallet.t()} | {:error, ErrorMessage.t()}
-  def deposit_amount(%{user_id: user_id, currency: currency, cent_amount: cent_amount}, _) do
+  def deposit_amount(%{user_id: user_id, currency: currency, cent_amount: cent_amount}, _)
+      when cent_amount > 0 do
     Accounts.update_balance(%{user_id: user_id, currency: currency}, %{cent_amount: cent_amount})
   end
 
+  def deposit_amount(%{cent_amount: cent_amount}, _) do
+    {:error,
+     ErrorMessage.bad_request("Please enter a positive integer!", %{
+       cent_amount: cent_amount
+     })}
+  end
+
   @spec withdraw_amount(map, resolution()) :: {:ok, Wallet.t()} | {:error, ErrorMessage.t()}
-  def withdraw_amount(%{user_id: user_id, currency: currency, cent_amount: cent_amount}, _) do
-    Accounts.update_balance(%{user_id: user_id, currency: currency}, %{
-      cent_amount: -abs(cent_amount)
-    })
+  def withdraw_amount(%{user_id: user_id, currency: currency, cent_amount: cent_amount}, _)
+      when cent_amount > 0 do
+    Accounts.update_balance(%{user_id: user_id, currency: currency}, %{cent_amount: -cent_amount})
+  end
+
+  def withdraw_amount(%{cent_amount: cent_amount}, _) do
+    {:error,
+     ErrorMessage.bad_request("Please enter a positive integer!", %{
+       cent_amount: cent_amount
+     })}
   end
 end
