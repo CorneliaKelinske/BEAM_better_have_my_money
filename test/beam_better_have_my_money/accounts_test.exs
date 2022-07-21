@@ -268,6 +268,24 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
     end
   end
 
+  describe "update_balance/2" do
+    setup [:user, :wallet]
+
+    test "returns wallet with updated balance", %{user: %{id: id}, wallet: %{currency: currency}} do
+      assert {:ok,
+              %Wallet{
+                user_id: ^id,
+                currency: ^currency,
+                cent_amount: 0
+              }} =
+               Accounts.update_balance(%Wallet{user_id: id, currency: currency}, %{
+                 cent_amount: -1_000
+               })
+
+      assert [%Wallet{cent_amount: 0}] = Accounts.all_wallets()
+    end
+  end
+
   describe "delete_wallet/1" do
     setup [:user, :wallet]
 

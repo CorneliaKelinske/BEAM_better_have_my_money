@@ -18,9 +18,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.TotalWorth do
     else
       [] ->
         {:error,
-         ErrorMessage.not_found("No wallets found for this User Id.", %{
-           user_id: user_id
-         })}
+         ErrorMessage.not_found("No wallets found for this User Id.", %{user_id: user_id})}
 
       error ->
         error
