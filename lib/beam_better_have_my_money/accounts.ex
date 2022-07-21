@@ -8,6 +8,7 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
   alias EctoShorts.Actions
 
   @type error :: ErrorMessage.t()
+  @type currency :: Wallet.currency()
 
   @spec all_users(map) :: [User.t()]
   def all_users(params \\ %{}) do
@@ -58,6 +59,15 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
   def update_wallet(%Wallet{user_id: user_id, currency: currency}, params) do
     with {:ok, wallet} <- find_wallet(%{user_id: user_id, currency: currency}) do
       Actions.update(Wallet, wallet, params)
+    end
+  end
+
+  @spec update_balance(%{user_id: non_neg_integer(), currency: currency()}, %{
+          cent_amount: integer()
+        }) :: {:ok, Wallet.t()} | {:error, error()}
+  def update_balance(%{user_id: user_id, currency: currency}, %{cent_amount: cent_amount}) do
+    with {:ok, wallet} <- find_wallet(%{user_id: user_id, currency: currency}) do
+      Actions.update(Wallet, wallet, %{cent_amount: wallet.cent_amount + cent_amount})
     end
   end
 
