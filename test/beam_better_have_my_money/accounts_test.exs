@@ -3,7 +3,7 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
 
   alias BEAMBetterHaveMyMoney.{Accounts, Accounts.User, Accounts.Wallet}
 
-  import BEAMBetterHaveMyMoney.AccountsFixtures, only: [user: 1, wallet: 1]
+  import BEAMBetterHaveMyMoney.AccountsFixtures, only: [user: 1, wallet: 1, user2: 1, wallet3: 1]
   @valid_user_params %{name: "Harry", email: "dresden@example.com"}
   @valid_wallet_params %{currency: :CAD, cent_amount: 1_000}
   @invalid_user_params %{email: nil, name: nil}
@@ -304,6 +304,26 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
                 }}
 
       assert Accounts.all_wallets() === []
+    end
+  end
+
+  describe "send_amount/1" do
+    setup [:user, :wallet, :user2, :wallet3]
+
+    test "sends money between two wallets", %{
+      user: user,
+      wallet: wallet,
+      user2: user2,
+      wallet3: wallet3
+    } do
+      assert nil =
+               Accounts.send_amount(%{
+                 from_user_id: user.id,
+                 from_currency: wallet.currency,
+                 cent_amount: 100,
+                 to_user_id: user2.id,
+                 to_currency: wallet3.currency
+               })
     end
   end
 end

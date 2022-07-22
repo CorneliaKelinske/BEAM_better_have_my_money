@@ -4,7 +4,7 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
   """
 
   import Ecto.Query, warn: false
-  alias BEAMBetterHaveMyMoney.{Accounts.User, Accounts.Wallet}
+  alias BEAMBetterHaveMyMoney.{Accounts.User, Accounts.Wallet, Repo}
   alias EctoShorts.Actions
 
   @type error :: ErrorMessage.t()
@@ -68,6 +68,36 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
   def update_balance(%{user_id: user_id, currency: currency}, %{cent_amount: cent_amount}) do
     with {:ok, wallet} <- find_wallet(%{user_id: user_id, currency: currency}) do
       Actions.update(Wallet, wallet, %{cent_amount: wallet.cent_amount + cent_amount})
+    end
+  end
+
+  def send_amount(%{
+        from_user_id: from_user_id,
+        from_currency: from_currency,
+        cent_amount: cent_amount,
+        to_user_id: to_user_id,
+        to_currency: to_currency
+      }) do
+    with {:ok, %Wallet{id: from_wallet_id, cent_amount: from_wallet_cent_amount}} <-
+           find_wallet(%{user_id: from_user_id, currency: from_currency}),
+         {:ok, %Wallet{id: to_wallet_id, cent_amount: to_wallet_cent_amount}} <-
+           find_wallet(%{user_id: to_user_id, currency: to_currency}) do
+      from_wallet =
+        from Wallet,
+          where: [id: ^from_wallet_id]
+
+      to_wallet =
+        from Wallet,
+          where: [id: ^to_wallet_id]
+
+      Ecto.Multi.new()
+      |> Ecto.Multi.update_all(:from_wallet_update, from_wallet,
+        inc: [cent_amount: from_wallet_cent_amount - cent_amount]
+      )
+      |> Ecto.Multi.update_all(:to_wallet_update, to_wallet,
+        inc: [cent_amount: to_wallet_cent_amount + cent_amount]
+      )
+      |> Repo.transaction()
     end
   end
 

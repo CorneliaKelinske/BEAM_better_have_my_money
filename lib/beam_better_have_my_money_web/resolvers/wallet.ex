@@ -53,4 +53,8 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
        cent_amount: cent_amount
      })}
   end
+
+  def send_amount(params, _) do
+    {:ok, Accounts.send_amount(params)}
+  end
 end
