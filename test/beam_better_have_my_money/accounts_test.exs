@@ -1,9 +1,15 @@
 defmodule BEAMBetterHaveMyMoney.AccountsTest do
   use BEAMBetterHaveMyMoney.DataCase
 
-  alias BEAMBetterHaveMyMoney.{Accounts, Accounts.User, Accounts.Wallet, Exchanger.ExchangeRate, ExchangeRateStorage}
+  alias BEAMBetterHaveMyMoney.{
+    Accounts,
+    Accounts.User,
+    Accounts.Wallet
+  }
 
-  import BEAMBetterHaveMyMoney.AccountsFixtures, only: [user: 1, wallet: 1, user2: 1, user2_wallet: 1]
+  import BEAMBetterHaveMyMoney.AccountsFixtures,
+    only: [user: 1, wallet: 1, user2: 1, user2_wallet: 1]
+
   @valid_user_params %{name: "Harry", email: "dresden@example.com"}
   @valid_wallet_params %{currency: :CAD, cent_amount: 1_000}
   @invalid_user_params %{email: nil, name: nil}
@@ -312,19 +318,25 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
 
     test "sends money between two wallets", %{
       user: user,
-      wallet: wallet,
+      wallet: %{id: from_wallet_id, cent_amount: from_wallet_cent_amount, currency: from_wallet_currency},
       user2: user2,
-      user2_wallet: user2_wallet
+      user2_wallet: %{id: to_wallet_id, cent_amount: to_wallet_cent_amount, currency: to_wallet_currency}
     } do
-      
-      assert nil =
+
+      assert {:ok, %{exchange_rate: 1, from_wallet_update: {1, [%Wallet{}]}, to_wallet_update: {1, [%Wallet{}]}}} =
                Accounts.send_amount(%{
                  from_user_id: user.id,
-                 from_currency: wallet.currency,
+                 from_currency: from_wallet_currency,
                  cent_amount: 100,
                  to_user_id: user2.id,
-                 to_currency: user2_wallet.currency
+                 to_currency: to_wallet_currency
                })
+
+      from_wallet_cent_amount = from_wallet_cent_amount - 100
+      to_wallet_cent_amount = to_wallet_cent_amount + 100
+
+      assert {:ok, %Wallet{currency: from_wallet_currency, cent_amount: from_wallet_cent_amount}} = Accounts.find_wallet(%{id: from_wallet_id})
+      assert {:ok, %Wallet{currency: to_wallet_currency, cent_amount: to_wallet_cent_amount}} = Accounts.find_wallet(%{id: to_wallet_id})
     end
   end
 end
