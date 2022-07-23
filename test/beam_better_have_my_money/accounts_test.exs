@@ -1,9 +1,9 @@
 defmodule BEAMBetterHaveMyMoney.AccountsTest do
   use BEAMBetterHaveMyMoney.DataCase
 
-  alias BEAMBetterHaveMyMoney.{Accounts, Accounts.User, Accounts.Wallet}
+  alias BEAMBetterHaveMyMoney.{Accounts, Accounts.User, Accounts.Wallet, Exchanger.ExchangeRate, ExchangeRateStorage}
 
-  import BEAMBetterHaveMyMoney.AccountsFixtures, only: [user: 1, wallet: 1, user2: 1, wallet3: 1]
+  import BEAMBetterHaveMyMoney.AccountsFixtures, only: [user: 1, wallet: 1, user2: 1, user2_wallet: 1]
   @valid_user_params %{name: "Harry", email: "dresden@example.com"}
   @valid_wallet_params %{currency: :CAD, cent_amount: 1_000}
   @invalid_user_params %{email: nil, name: nil}
@@ -24,7 +24,7 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
       assert [%User{id: ^id, name: ^name, email: ^email}] = Accounts.all_users(%{name: name})
     end
 
-    test "returns an empty list when no users with matching params are found" do
+    test "returns an empty list when no users wExcghaith matching params are found" do
       assert [] = Accounts.all_users(%{name: "does not exist"})
     end
   end
@@ -308,21 +308,22 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
   end
 
   describe "send_amount/1" do
-    setup [:user, :wallet, :user2, :wallet3]
+    setup [:user, :wallet, :user2, :user2_wallet]
 
     test "sends money between two wallets", %{
       user: user,
       wallet: wallet,
       user2: user2,
-      wallet3: wallet3
+      user2_wallet: user2_wallet
     } do
+      
       assert nil =
                Accounts.send_amount(%{
                  from_user_id: user.id,
                  from_currency: wallet.currency,
                  cent_amount: 100,
                  to_user_id: user2.id,
-                 to_currency: wallet3.currency
+                 to_currency: user2_wallet.currency
                })
     end
   end

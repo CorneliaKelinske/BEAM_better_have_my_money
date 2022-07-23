@@ -4,7 +4,7 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
   """
 
   import Ecto.Query, warn: false
-  alias BEAMBetterHaveMyMoney.{Accounts.User, Accounts.Wallet, Repo}
+  alias BEAMBetterHaveMyMoney.{Accounts.User, Accounts.Wallet, ExchangeRateStorage, Repo}
   alias EctoShorts.Actions
 
   @type error :: ErrorMessage.t()
@@ -81,24 +81,35 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
     with {:ok, %Wallet{id: from_wallet_id, cent_amount: from_wallet_cent_amount}} <-
            find_wallet(%{user_id: from_user_id, currency: from_currency}),
          {:ok, %Wallet{id: to_wallet_id, cent_amount: to_wallet_cent_amount}} <-
-           find_wallet(%{user_id: to_user_id, currency: to_currency}) do
+           find_wallet(%{user_id: to_user_id, currency: to_currency}),
+           {:ok, exchange_rate} <- maybe_get_exchange_rate(from_currency, to_currency) do
       from_wallet =
-        from Wallet,
-          where: [id: ^from_wallet_id]
+        from w in Wallet,
+          where: [id: ^from_wallet_id],
+          select: w
 
       to_wallet =
-        from Wallet,
-          where: [id: ^to_wallet_id]
+        from w in Wallet,
+          where: [id: ^to_wallet_id],
+          select: w
 
       Ecto.Multi.new()
       |> Ecto.Multi.update_all(:from_wallet_update, from_wallet,
         inc: [cent_amount: from_wallet_cent_amount - cent_amount]
       )
       |> Ecto.Multi.update_all(:to_wallet_update, to_wallet,
-        inc: [cent_amount: to_wallet_cent_amount + cent_amount]
-      )
-      |> Repo.transaction()
+        inc: [cent_amount: to_wallet_cent_amount + cent_amount * exchange_rate]
+      ) |> IO.inspect(label: "100", limit: :infinity, charlists: false)
+      |> Repo.transaction() |> IO.inspect(label: "101", limit: :infinity, charlists: false)
     end
+  end
+
+  defp maybe_get_exchange_rate(from_currency, from_currency) do
+    {:ok, 1}
+  end
+
+  defp maybe_get_exchange_rate(from_currency, to_currency) do
+    ExchangeRateStorage.get_exchange_rate(from_currency, to_currency)
   end
 
   @doc """

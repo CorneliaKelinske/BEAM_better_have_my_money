@@ -54,7 +54,14 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
      })}
   end
 
-  def send_amount(params, _) do
+  def send_amount(%{cent_amount: cent_amount} = params, _) when cent_amount > 0 do
     {:ok, Accounts.send_amount(params)}
+  end
+
+  def send_amount(%{cent_amount: cent_amount}, _) do
+    {:error,
+    ErrorMessage.bad_request("Please enter a positive integer!", %{
+      cent_amount: cent_amount
+    })}
   end
 end
