@@ -4,7 +4,13 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
 
   @type currency :: Wallet.currency()
   @type resolution :: Absinthe.Resolution.t()
-  @type transaction :: %{from_wallet: Wallet.t(), cent_amount: non_neg_integer(), from_currency: currency(), to_currency: currency, to_wallet: Wallet.t()}
+  @type transaction :: %{
+          from_wallet: Wallet.t(),
+          cent_amount: non_neg_integer(),
+          from_currency: currency(),
+          to_currency: currency,
+          to_wallet: Wallet.t()
+        }
 
   @spec all(map, resolution()) :: {:ok, [Wallet.t()]} | {:error, ErrorMessage.t()}
   def all(params, _) do
@@ -56,7 +62,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
      })}
   end
 
-  @spec send_amount(map, resolution()) :: {:ok, transaction()} |{:error, ErrorMessage.t()}
+  @spec send_amount(map, resolution()) :: {:ok, transaction()} | {:error, ErrorMessage.t()}
   def send_amount(
         %{cent_amount: cent_amount, from_currency: from_currency, to_currency: to_currency} =
           params,

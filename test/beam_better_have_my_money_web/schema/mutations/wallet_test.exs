@@ -1,6 +1,9 @@
 defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
   use BEAMBetterHaveMyMoney.DataCase, async: true
-  import BEAMBetterHaveMyMoney.AccountsFixtures, only: [user: 1, wallet: 1]
+
+  import BEAMBetterHaveMyMoney.AccountsFixtures,
+    only: [user: 1, wallet: 1, user2: 1, user2_wallet: 1]
+
   alias BEAMBetterHaveMyMoneyWeb.Schema
 
   @create_wallet_doc """
@@ -190,6 +193,77 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
              } =
                Absinthe.run(@withdraw_amount_doc, Schema,
                  variables: %{"user_id" => id, "currency" => currency, "cent_amount" => -1_000}
+               )
+    end
+  end
+
+  @send_amount_doc """
+    mutation SendAmount($from_user_id: ID!, $from_currency: Currency!, $cent_amount: Int!, $to_user_id: ID!, $to_currency: Currency!){
+    sendAmount (from_user_id: $from_user_id, from_currency: $from_currency, cent_amount: $cent_amount
+      to_user_id: $to_user_id, to_currency: $to_currency) {
+        from_wallet {
+          id
+          user_id
+          currency
+          cent_amount
+          },
+        cent_amount
+        from_currency
+        to_currency
+        exchange_rate
+        to_wallet {
+          id
+          user_id
+          currency
+          cent_amount
+          }
+        }
+  }
+  """
+
+  describe "@send_amount" do
+    setup [:user, :wallet, :user2, :user2_wallet]
+
+    test "sends an amount from one wallet to another", %{
+      user: %{id: from_user_id},
+      user2: %{id: to_user_id},
+      wallet: %{cent_amount: from_wallet_cent_amount},
+      user2_wallet: %{cent_amount: to_wallet_cent_amount}
+    } do
+      from_wallet_cent_amount = from_wallet_cent_amount - 1000
+      to_wallet_cent_amount = to_wallet_cent_amount + 1000
+      string_from_user_id = to_string(from_user_id)
+      string_to_user_id = to_string(to_user_id)
+
+      assert {:ok,
+              %{
+                data: %{
+                  "sendAmount" => %{
+                    "cent_amount" => 1000,
+                    "exchange_rate" => 1.0,
+                    "from_currency" => "CAD",
+                    "from_wallet" => %{
+                      "cent_amount" => ^from_wallet_cent_amount,
+                      "currency" => "CAD",
+                      "user_id" => ^string_from_user_id
+                    },
+                    "to_currency" => "CAD",
+                    "to_wallet" => %{
+                      "cent_amount" => ^to_wallet_cent_amount,
+                      "currency" => "CAD",
+                      "user_id" => ^string_to_user_id
+                    }
+                  }
+                }
+              }} =
+               Absinthe.run(@send_amount_doc, Schema,
+                 variables: %{
+                   "from_user_id" => from_user_id,
+                   "from_currency" => "CAD",
+                   "cent_amount" => 1000,
+                   "to_user_id" => to_user_id,
+                   "to_currency" => "CAD"
+                 }
                )
     end
   end

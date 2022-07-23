@@ -318,12 +318,24 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
 
     test "sends money between two wallets", %{
       user: user,
-      wallet: %{id: from_wallet_id, cent_amount: from_wallet_cent_amount, currency: from_wallet_currency},
+      wallet: %{
+        id: from_wallet_id,
+        cent_amount: from_wallet_cent_amount,
+        currency: from_wallet_currency
+      },
       user2: user2,
-      user2_wallet: %{id: to_wallet_id, cent_amount: to_wallet_cent_amount, currency: to_wallet_currency}
+      user2_wallet: %{
+        id: to_wallet_id,
+        cent_amount: to_wallet_cent_amount,
+        currency: to_wallet_currency
+      }
     } do
-
-      assert {:ok, %{exchange_rate: 1, from_wallet_update: {1, [%Wallet{}]}, to_wallet_update: {1, [%Wallet{}]}}} =
+      assert {:ok,
+              %{
+                exchange_rate: 1,
+                from_wallet_update: {1, [%Wallet{}]},
+                to_wallet_update: {1, [%Wallet{}]}
+              }} =
                Accounts.send_amount(%{
                  from_user_id: user.id,
                  from_currency: from_wallet_currency,
@@ -335,8 +347,11 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
       from_wallet_cent_amount = from_wallet_cent_amount - 100
       to_wallet_cent_amount = to_wallet_cent_amount + 100
 
-      assert {:ok, %Wallet{currency: from_wallet_currency, cent_amount: from_wallet_cent_amount}} = Accounts.find_wallet(%{id: from_wallet_id})
-      assert {:ok, %Wallet{currency: to_wallet_currency, cent_amount: to_wallet_cent_amount}} = Accounts.find_wallet(%{id: to_wallet_id})
+      assert {:ok, %Wallet{currency: ^from_wallet_currency, cent_amount: ^from_wallet_cent_amount}} =
+               Accounts.find_wallet(%{id: from_wallet_id})
+
+      assert {:ok, %Wallet{currency: ^to_wallet_currency, cent_amount: ^to_wallet_cent_amount}} =
+               Accounts.find_wallet(%{id: to_wallet_id})
     end
   end
 end

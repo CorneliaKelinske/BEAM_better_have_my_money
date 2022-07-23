@@ -78,9 +78,9 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
         to_user_id: to_user_id,
         to_currency: to_currency
       }) do
-    with {:ok, %Wallet{id: from_wallet_id, cent_amount: from_wallet_cent_amount}} <-
+    with {:ok, %Wallet{id: from_wallet_id}} <-
            find_wallet(%{user_id: from_user_id, currency: from_currency}),
-         {:ok, %Wallet{id: to_wallet_id, cent_amount: to_wallet_cent_amount}} <-
+         {:ok, %Wallet{id: to_wallet_id}} <-
            find_wallet(%{user_id: to_user_id, currency: to_currency}),
          {:ok, exchange_rate} <- maybe_get_exchange_rate(from_currency, to_currency) do
       from_wallet =
@@ -95,11 +95,9 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
 
       Ecto.Multi.new()
       |> Ecto.Multi.put(:exchange_rate, exchange_rate)
-      |> Ecto.Multi.update_all(:from_wallet_update, from_wallet,
-        inc: [cent_amount: from_wallet_cent_amount - cent_amount]
-      )
+      |> Ecto.Multi.update_all(:from_wallet_update, from_wallet, inc: [cent_amount: -cent_amount])
       |> Ecto.Multi.update_all(:to_wallet_update, to_wallet,
-        inc: [cent_amount: to_wallet_cent_amount + cent_amount * exchange_rate]
+        inc: [cent_amount: cent_amount * exchange_rate]
       )
       |> Repo.transaction()
     end
