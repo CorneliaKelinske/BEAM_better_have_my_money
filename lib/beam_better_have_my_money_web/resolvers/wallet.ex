@@ -72,8 +72,8 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
     with {:ok,
           %{
             exchange_rate: exchange_rate,
-            from_wallet_update: {1, [from_wallet]},
-            to_wallet_update: {1, [to_wallet]}
+            update_from_wallet: %Wallet{} = from_wallet,
+            update_to_wallet: %Wallet{} = to_wallet
           }} <- Accounts.send_amount(params) do
       {:ok,
        %{

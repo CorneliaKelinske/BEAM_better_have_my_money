@@ -332,9 +332,20 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
     } do
       assert {:ok,
               %{
+                cent_amount: 100,
                 exchange_rate: 1,
-                from_wallet_update: {1, [%Wallet{}]},
-                to_wallet_update: {1, [%Wallet{}]}
+                from_currency: :CAD,
+                to_currency: :CAD,
+                update_from_wallet: %Wallet{
+                  cent_amount: 900,
+                  currency: :CAD,
+                  id: ^from_wallet_id
+                },
+                update_to_wallet: %Wallet{
+                  cent_amount: 1100,
+                  currency: :CAD,
+                  id: ^to_wallet_id
+                }
               }} =
                Accounts.send_amount(%{
                  from_user_id: user.id,
@@ -347,7 +358,8 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
       from_wallet_cent_amount = from_wallet_cent_amount - 100
       to_wallet_cent_amount = to_wallet_cent_amount + 100
 
-      assert {:ok, %Wallet{currency: ^from_wallet_currency, cent_amount: ^from_wallet_cent_amount}} =
+      assert {:ok,
+              %Wallet{currency: ^from_wallet_currency, cent_amount: ^from_wallet_cent_amount}} =
                Accounts.find_wallet(%{id: from_wallet_id})
 
       assert {:ok, %Wallet{currency: ^to_wallet_currency, cent_amount: ^to_wallet_cent_amount}} =

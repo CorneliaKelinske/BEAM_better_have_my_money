@@ -78,29 +78,42 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
         to_user_id: to_user_id,
         to_currency: to_currency
       }) do
-    with {:ok, %Wallet{id: from_wallet_id}} <-
-           find_wallet(%{user_id: from_user_id, currency: from_currency}),
-         {:ok, %Wallet{id: to_wallet_id}} <-
-           find_wallet(%{user_id: to_user_id, currency: to_currency}),
-         {:ok, exchange_rate} <- maybe_get_exchange_rate(from_currency, to_currency) do
-      from_wallet =
-        from w in Wallet,
-          where: [id: ^from_wallet_id],
-          select: w
+    Ecto.Multi.new()
+    |> Ecto.Multi.put(:from_user_id, from_user_id)
+    |> Ecto.Multi.put(:from_currency, from_currency)
+    |> Ecto.Multi.put(:to_user_id, to_user_id)
+    |> Ecto.Multi.put(:to_currency, to_currency)
+    |> Ecto.Multi.put(:cent_amount, cent_amount)
+    |> Ecto.Multi.one(:find_from_wallet, &find_from_wallet/1)
+    |> Ecto.Multi.one(:find_to_wallet, &find_to_wallet/1)
+    |> Ecto.Multi.run(:exchange_rate, fn _, _ ->
+      maybe_get_exchange_rate(from_currency, to_currency)
+    end)
+    |> Ecto.Multi.update(:update_from_wallet, &update_from_wallet/1)
+    |> Ecto.Multi.update(:update_to_wallet, &update_to_wallet/1)
+    |> Repo.transaction()
+  end
 
-      to_wallet =
-        from w in Wallet,
-          where: [id: ^to_wallet_id],
-          select: w
+  defp find_from_wallet(%{from_user_id: from_user_id, from_currency: from_currency}) do
+    from(w in Wallet, where: w.user_id == ^from_user_id and w.currency == ^from_currency)
+  end
 
-      Ecto.Multi.new()
-      |> Ecto.Multi.put(:exchange_rate, exchange_rate)
-      |> Ecto.Multi.update_all(:from_wallet_update, from_wallet, inc: [cent_amount: -cent_amount])
-      |> Ecto.Multi.update_all(:to_wallet_update, to_wallet,
-        inc: [cent_amount: cent_amount * exchange_rate]
-      )
-      |> Repo.transaction()
-    end
+  defp find_to_wallet(%{to_user_id: to_user_id, to_currency: to_currency}) do
+    from(w in Wallet, where: w.user_id == ^to_user_id and w.currency == ^to_currency)
+  end
+
+  defp update_from_wallet(%{find_from_wallet: from_wallet, cent_amount: cent_amount}) do
+    Ecto.Changeset.change(from_wallet, cent_amount: from_wallet.cent_amount - cent_amount)
+  end
+
+  defp update_to_wallet(%{
+         find_to_wallet: to_wallet,
+         cent_amount: cent_amount,
+         exchange_rate: exchange_rate
+       }) do
+    Ecto.Changeset.change(to_wallet,
+      cent_amount: to_wallet.cent_amount + cent_amount * exchange_rate
+    )
   end
 
   defp maybe_get_exchange_rate(from_currency, from_currency) do
