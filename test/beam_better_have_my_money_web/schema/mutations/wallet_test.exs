@@ -269,39 +269,35 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
       user: %{id: from_user_id},
       user2: %{id: to_user_id}
     } do
-
       assert {
-        :ok,
-        %{
-          data: %{"sendAmount" => nil},
-          errors: [
-            %{
-              code: :not_found,
-
-              message: "One of the wallets was not found",
-              name: :check_wallets_found,
-              path: ["sendAmount"]
-            }
-          ]
-        }
-      } = Absinthe.run(@send_amount_doc, Schema,
-      variables: %{
-        "from_user_id" => from_user_id,
-        "from_currency" => "CAD",
-        "cent_amount" => 1000,
-        "to_user_id" => to_user_id + 1,
-        "to_currency" => "CAD"
-      }
-    )
-
+               :ok,
+               %{
+                 data: %{"sendAmount" => nil},
+                 errors: [
+                   %{
+                     code: :not_found,
+                     message: "One of the wallets was not found",
+                     name: :check_wallets_found,
+                     path: ["sendAmount"]
+                   }
+                 ]
+               }
+             } =
+               Absinthe.run(@send_amount_doc, Schema,
+                 variables: %{
+                   "from_user_id" => from_user_id,
+                   "from_currency" => "CAD",
+                   "cent_amount" => 1000,
+                   "to_user_id" => to_user_id + 1,
+                   "to_currency" => "CAD"
+                 }
+               )
     end
 
     test "returns an error when a negative transfer amount is entered", %{
       user: %{id: from_user_id},
       user2: %{id: to_user_id}
     } do
-
-
       assert {
                :ok,
                %{
@@ -315,14 +311,14 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
                  ]
                }
              } =
-              Absinthe.run(@send_amount_doc, Schema,
-              variables: %{
-                "from_user_id" => from_user_id,
-                "from_currency" => "CAD",
-                "cent_amount" => -1000,
-                "to_user_id" => to_user_id + 1,
-                "to_currency" => "CAD"
-              }
+               Absinthe.run(@send_amount_doc, Schema,
+                 variables: %{
+                   "from_user_id" => from_user_id,
+                   "from_currency" => "CAD",
+                   "cent_amount" => -1000,
+                   "to_user_id" => to_user_id + 1,
+                   "to_currency" => "CAD"
+                 }
                )
     end
   end

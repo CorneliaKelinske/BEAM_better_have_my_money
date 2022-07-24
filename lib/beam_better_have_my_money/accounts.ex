@@ -5,18 +5,20 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
 
   import Ecto.Query, warn: false
 
-  alias BEAMBetterHaveMyMoney.{
-    Accounts.AmountTransfer,
-    Accounts.User,
-    Accounts.Wallet,
-    ExchangeRateStorage,
-    Repo
-  }
+  alias BEAMBetterHaveMyMoney.{Accounts.AmountTransfer, Accounts.User, Accounts.Wallet, Repo}
+
 
   alias EctoShorts.Actions
 
   @type error :: ErrorMessage.t()
   @type currency :: Wallet.currency()
+  @type transfer_params :: %{
+  from_user_id: non_neg_integer(),
+  from_currency: currency(),
+  cent_amount: non_neg_integer(),
+  to_user_id: non_neg_integer(),
+  to_currency: currency()
+  }
 
   @spec all_users(map) :: [User.t()]
   def all_users(params \\ %{}) do
@@ -79,7 +81,8 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
     end
   end
 
-  def send_amount(%{
+  @spec send_amount(transfer_params()) :: {:ok, map} | {:error, Ecto.Multi.name(), ErrorMessage.t(), map}
+    def send_amount(%{
         from_user_id: from_user_id,
         from_currency: from_currency,
         cent_amount: cent_amount,
