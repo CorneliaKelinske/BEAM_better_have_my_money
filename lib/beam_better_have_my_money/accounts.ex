@@ -86,20 +86,37 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
     |> Ecto.Multi.put(:cent_amount, cent_amount)
     |> Ecto.Multi.one(:find_from_wallet, &find_from_wallet/1)
     |> Ecto.Multi.one(:find_to_wallet, &find_to_wallet/1)
-    |> Ecto.Multi.run(:exchange_rate, fn _, _ ->
-      maybe_get_exchange_rate(from_currency, to_currency)
-    end)
+    |> Ecto.Multi.run(:check_wallets_found, &check_wallets_found/2)
+    |> Ecto.Multi.run(:exchange_rate, &exchange_rate/2)
     |> Ecto.Multi.update(:update_from_wallet, &update_from_wallet/1)
     |> Ecto.Multi.update(:update_to_wallet, &update_to_wallet/1)
     |> Repo.transaction()
   end
 
+  defp check_wallets_found(_, %{find_from_wallet: %Wallet{}, find_to_wallet: %Wallet{}}) do
+    {:ok, "we good"}
+  end
+
+  defp check_wallets_found(_, _) do
+    {:error, ErrorMessage.not_found("One of the wallets was not found")}
+  end
+
+  defp exchange_rate(_, %{from_currency: from_currency, to_currency: to_currency}) do
+    maybe_get_exchange_rate(from_currency, to_currency)
+  end
+
   defp find_from_wallet(%{from_user_id: from_user_id, from_currency: from_currency}) do
-    from(w in Wallet, where: w.user_id == ^from_user_id and w.currency == ^from_currency)
+    from(w in Wallet,
+      where: w.user_id == ^from_user_id and w.currency == ^from_currency,
+      lock: "FOR UPDATE"
+    )
   end
 
   defp find_to_wallet(%{to_user_id: to_user_id, to_currency: to_currency}) do
-    from(w in Wallet, where: w.user_id == ^to_user_id and w.currency == ^to_currency)
+    from(w in Wallet,
+      where: w.user_id == ^to_user_id and w.currency == ^to_currency,
+      lock: "FOR UPDATE"
+    )
   end
 
   defp update_from_wallet(%{find_from_wallet: from_wallet, cent_amount: cent_amount}) do
