@@ -69,21 +69,25 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
         _
       )
       when cent_amount > 0 do
-    with {:ok,
-          %{
-            exchange_rate: exchange_rate,
-            update_from_wallet: %Wallet{} = from_wallet,
-            update_to_wallet: %Wallet{} = to_wallet
-          }} <- Accounts.send_amount(params) do
+    case Accounts.send_amount(params) do
       {:ok,
        %{
-         from_wallet: from_wallet,
-         cent_amount: cent_amount,
-         from_currency: from_currency,
-         to_currency: to_currency,
          exchange_rate: exchange_rate,
-         to_wallet: to_wallet
-       }}
+         update_from_wallet: %Wallet{} = from_wallet,
+         update_to_wallet: %Wallet{} = to_wallet
+       }} ->
+        {:ok,
+         %{
+           from_wallet: from_wallet,
+           cent_amount: cent_amount,
+           from_currency: from_currency,
+           to_currency: to_currency,
+           exchange_rate: exchange_rate,
+           to_wallet: to_wallet
+         }}
+
+      {:error, name, %ErrorMessage{} = error_message, _} ->
+        {:error, {name, error_message}}
     end
   end
 

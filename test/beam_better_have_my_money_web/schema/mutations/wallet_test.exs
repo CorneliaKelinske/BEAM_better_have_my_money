@@ -111,7 +111,6 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
                  errors: [
                    %{
                      code: :bad_request,
-                     locations: [%{column: 3, line: 2}],
                      message: "Please enter a positive integer!",
                      path: ["depositAmount"]
                    }
@@ -184,7 +183,6 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
                  errors: [
                    %{
                      code: :bad_request,
-                     locations: [%{column: 3, line: 2}],
                      message: "Please enter a positive integer!",
                      path: ["withdrawAmount"]
                    }
@@ -264,6 +262,67 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
                    "to_user_id" => to_user_id,
                    "to_currency" => "CAD"
                  }
+               )
+    end
+
+    test "returns a meaningful error message when the transaction does not succeed", %{
+      user: %{id: from_user_id},
+      user2: %{id: to_user_id}
+    } do
+
+      assert {
+        :ok,
+        %{
+          data: %{"sendAmount" => nil},
+          errors: [
+            %{
+              code: :not_found,
+
+              message: "One of the wallets was not found",
+              name: :check_wallets_found,
+              path: ["sendAmount"]
+            }
+          ]
+        }
+      } = Absinthe.run(@send_amount_doc, Schema,
+      variables: %{
+        "from_user_id" => from_user_id,
+        "from_currency" => "CAD",
+        "cent_amount" => 1000,
+        "to_user_id" => to_user_id + 1,
+        "to_currency" => "CAD"
+      }
+    )
+
+    end
+
+    test "returns an error when a negative transfer amount is entered", %{
+      user: %{id: from_user_id},
+      user2: %{id: to_user_id}
+    } do
+
+
+      assert {
+               :ok,
+               %{
+                 data: %{"sendAmount" => nil},
+                 errors: [
+                   %{
+                     code: :bad_request,
+                     message: "Please enter a positive integer!",
+                     path: ["sendAmount"]
+                   }
+                 ]
+               }
+             } =
+              Absinthe.run(@send_amount_doc, Schema,
+              variables: %{
+                "from_user_id" => from_user_id,
+                "from_currency" => "CAD",
+                "cent_amount" => -1000,
+                "to_user_id" => to_user_id + 1,
+                "to_currency" => "CAD"
+              }
                )
     end
   end

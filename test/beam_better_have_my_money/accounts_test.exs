@@ -8,7 +8,7 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
   }
 
   import BEAMBetterHaveMyMoney.AccountsFixtures,
-    only: [user: 1, wallet: 1, user2: 1, user2_wallet: 1]
+    only: [user: 1, wallet: 1, wallet2: 1, user2: 1, user2_wallet: 1]
 
   @valid_user_params %{name: "Harry", email: "dresden@example.com"}
   @valid_wallet_params %{currency: :CAD, cent_amount: 1_000}
@@ -314,7 +314,7 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
   end
 
   describe "send_amount/1" do
-    setup [:user, :wallet, :user2, :user2_wallet]
+    setup [:user, :wallet, :wallet2, :user2, :user2_wallet]
 
     test "sends money between two wallets", %{
       user: user,
@@ -369,35 +369,36 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
     test "returns an error when no corresponding wallet is found", %{
       user: user,
       wallet: %{
-        id: from_wallet_id,
-        cent_amount: from_wallet_cent_amount,
         currency: from_wallet_currency
       },
       user2: user2,
       user2_wallet: %{
-        id: to_wallet_id,
-        cent_amount: to_wallet_cent_amount,
         currency: to_wallet_currency
       }
     } do
       assert {:error, :check_wallets_found, %ErrorMessage{code: :not_found}, _} =
                Accounts.send_amount(%{
                  from_user_id: user.id,
-                 from_currency: :CAD,
+                 from_currency: from_wallet_currency,
                  cent_amount: 100,
                  to_user_id: user2.id + 1,
                  to_currency: to_wallet_currency
                })
+    end
 
-      # from_wallet_cent_amount = from_wallet_cent_amount - 100
-      # to_wallet_cent_amount = to_wallet_cent_amount + 100
-
-      # assert {:ok,
-      #         %Wallet{currency: ^from_wallet_currency, cent_amount: ^from_wallet_cent_amount}} =
-      #          Accounts.find_wallet(%{id: from_wallet_id})
-
-      # assert {:ok, %Wallet{currency: ^to_wallet_currency, cent_amount: ^to_wallet_cent_amount}} =
-      #          Accounts.find_wallet(%{id: to_wallet_id})
+    test "returns an error when the exchange rate is not found", %{
+      user: user,
+      wallet: %{currency: from_wallet_currency},
+      wallet2: %{currency: to_wallet_currency}
+    } do
+      assert {:error, :exchange_rate, %ErrorMessage{code: :not_found}, _} =
+               Accounts.send_amount(%{
+                 from_user_id: user.id,
+                 from_currency: from_wallet_currency,
+                 cent_amount: 100,
+                 to_user_id: user.id,
+                 to_currency: to_wallet_currency
+               })
     end
   end
 end

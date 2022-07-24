@@ -4,7 +4,15 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
   """
 
   import Ecto.Query, warn: false
-  alias BEAMBetterHaveMyMoney.{Accounts.User, Accounts.Wallet, ExchangeRateStorage, Repo}
+
+  alias BEAMBetterHaveMyMoney.{
+    Accounts.AmountTransfer,
+    Accounts.User,
+    Accounts.Wallet,
+    ExchangeRateStorage,
+    Repo
+  }
+
   alias EctoShorts.Actions
 
   @type error :: ErrorMessage.t()
@@ -84,61 +92,13 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
     |> Ecto.Multi.put(:to_user_id, to_user_id)
     |> Ecto.Multi.put(:to_currency, to_currency)
     |> Ecto.Multi.put(:cent_amount, cent_amount)
-    |> Ecto.Multi.one(:find_from_wallet, &find_from_wallet/1)
-    |> Ecto.Multi.one(:find_to_wallet, &find_to_wallet/1)
-    |> Ecto.Multi.run(:check_wallets_found, &check_wallets_found/2)
-    |> Ecto.Multi.run(:exchange_rate, &exchange_rate/2)
-    |> Ecto.Multi.update(:update_from_wallet, &update_from_wallet/1)
-    |> Ecto.Multi.update(:update_to_wallet, &update_to_wallet/1)
+    |> Ecto.Multi.one(:find_from_wallet, &AmountTransfer.find_and_lock_from_wallet/1)
+    |> Ecto.Multi.one(:find_to_wallet, &AmountTransfer.find_and_lock_to_wallet/1)
+    |> Ecto.Multi.run(:check_wallets_found, &AmountTransfer.check_wallets_found/2)
+    |> Ecto.Multi.run(:exchange_rate, &AmountTransfer.exchange_rate/2)
+    |> Ecto.Multi.update(:update_from_wallet, &AmountTransfer.update_from_wallet/1)
+    |> Ecto.Multi.update(:update_to_wallet, &AmountTransfer.update_to_wallet/1)
     |> Repo.transaction()
-  end
-
-  defp check_wallets_found(_, %{find_from_wallet: %Wallet{}, find_to_wallet: %Wallet{}}) do
-    {:ok, "we good"}
-  end
-
-  defp check_wallets_found(_, _) do
-    {:error, ErrorMessage.not_found("One of the wallets was not found")}
-  end
-
-  defp exchange_rate(_, %{from_currency: from_currency, to_currency: to_currency}) do
-    maybe_get_exchange_rate(from_currency, to_currency)
-  end
-
-  defp find_from_wallet(%{from_user_id: from_user_id, from_currency: from_currency}) do
-    from(w in Wallet,
-      where: w.user_id == ^from_user_id and w.currency == ^from_currency,
-      lock: "FOR UPDATE"
-    )
-  end
-
-  defp find_to_wallet(%{to_user_id: to_user_id, to_currency: to_currency}) do
-    from(w in Wallet,
-      where: w.user_id == ^to_user_id and w.currency == ^to_currency,
-      lock: "FOR UPDATE"
-    )
-  end
-
-  defp update_from_wallet(%{find_from_wallet: from_wallet, cent_amount: cent_amount}) do
-    Ecto.Changeset.change(from_wallet, cent_amount: from_wallet.cent_amount - cent_amount)
-  end
-
-  defp update_to_wallet(%{
-         find_to_wallet: to_wallet,
-         cent_amount: cent_amount,
-         exchange_rate: exchange_rate
-       }) do
-    Ecto.Changeset.change(to_wallet,
-      cent_amount: to_wallet.cent_amount + cent_amount * exchange_rate
-    )
-  end
-
-  defp maybe_get_exchange_rate(from_currency, from_currency) do
-    {:ok, 1}
-  end
-
-  defp maybe_get_exchange_rate(from_currency, to_currency) do
-    ExchangeRateStorage.get_exchange_rate(from_currency, to_currency)
   end
 
   @doc """
