@@ -48,7 +48,7 @@ defmodule BEAMBetterHaveMyMoney.Accounts.AmountTransfer do
         exchange_rate: exchange_rate
       }) do
     Ecto.Changeset.change(to_wallet,
-      cent_amount: to_wallet_cent_amount + cent_amount * exchange_rate
+      cent_amount: to_wallet_cent_amount + round(cent_amount * exchange_rate)
     )
   end
 end

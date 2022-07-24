@@ -333,7 +333,7 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
       assert {:ok,
               %{
                 cent_amount: 100,
-                exchange_rate: 1,
+                exchange_rate: 1.0,
                 from_currency: :CAD,
                 to_currency: :CAD,
                 update_from_wallet: %Wallet{

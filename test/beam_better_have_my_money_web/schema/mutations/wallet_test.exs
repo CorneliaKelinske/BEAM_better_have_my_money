@@ -6,6 +6,8 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
 
   alias BEAMBetterHaveMyMoneyWeb.Schema
 
+  @currency "CAD"
+
   @create_wallet_doc """
     mutation CreateWallet($user_id: ID!, $currency: Currency!, $cent_amount: Int!){
     createWallet (user_id: $user_id, currency: $currency, cent_amount: $cent_amount) {
@@ -34,7 +36,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
                  data: %{
                    "createWallet" => %{
                      "user_id" => ^user_id,
-                     "currency" => "CAD",
+                     "currency" => @currency,
                      "cent_amount" => 100_000,
                      "user" => %{
                        "id" => ^user_id,
@@ -46,7 +48,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
                }
              } =
                Absinthe.run(@create_wallet_doc, Schema,
-                 variables: %{"user_id" => id, "currency" => "CAD", "cent_amount" => 100_000}
+                 variables: %{"user_id" => id, "currency" => @currency, "cent_amount" => 100_000}
                )
     end
   end
@@ -239,16 +241,16 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
                   "sendAmount" => %{
                     "cent_amount" => 1000,
                     "exchange_rate" => 1.0,
-                    "from_currency" => "CAD",
+                    "from_currency" => @currency,
                     "from_wallet" => %{
                       "cent_amount" => ^from_wallet_cent_amount,
-                      "currency" => "CAD",
+                      "currency" => @currency,
                       "user_id" => ^string_from_user_id
                     },
-                    "to_currency" => "CAD",
+                    "to_currency" => @currency,
                     "to_wallet" => %{
                       "cent_amount" => ^to_wallet_cent_amount,
-                      "currency" => "CAD",
+                      "currency" => @currency,
                       "user_id" => ^string_to_user_id
                     }
                   }
@@ -257,10 +259,10 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
                Absinthe.run(@send_amount_doc, Schema,
                  variables: %{
                    "from_user_id" => from_user_id,
-                   "from_currency" => "CAD",
+                   "from_currency" => @currency,
                    "cent_amount" => 1000,
                    "to_user_id" => to_user_id,
-                   "to_currency" => "CAD"
+                   "to_currency" => @currency
                  }
                )
     end
@@ -286,10 +288,10 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
                Absinthe.run(@send_amount_doc, Schema,
                  variables: %{
                    "from_user_id" => from_user_id,
-                   "from_currency" => "CAD",
+                   "from_currency" => @currency,
                    "cent_amount" => 1000,
                    "to_user_id" => to_user_id + 1,
-                   "to_currency" => "CAD"
+                   "to_currency" => @currency
                  }
                )
     end
@@ -314,10 +316,10 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
                Absinthe.run(@send_amount_doc, Schema,
                  variables: %{
                    "from_user_id" => from_user_id,
-                   "from_currency" => "CAD",
+                   "from_currency" => @currency,
                    "cent_amount" => -1000,
                    "to_user_id" => to_user_id + 1,
-                   "to_currency" => "CAD"
+                   "to_currency" => @currency
                  }
                )
     end
