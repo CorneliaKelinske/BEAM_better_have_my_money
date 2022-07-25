@@ -21,6 +21,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.User do
   @spec create_user(map, resolution()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   def create_user(params, _) do
     Accounts.create_user(params)
+    #d|> maybe_publish_total_worth_change()
   end
 
   @spec update_user(%{id: String.t()}, resolution()) ::
@@ -30,4 +31,15 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.User do
     |> String.to_integer()
     |> Accounts.update_user(Map.delete(params, :id))
   end
+
+
+  # defp maybe_publish_total_worth_change({:ok, user}) do
+  #   IO.puts("HIT AT USER")
+  #   Absinthe.Subscription.publish(BEAMBetterHaveMyMoneyWeb.Endpoint, user, created_user: "new user")
+  #   {:ok, user}
+  # end
+
+  # defp maybe_publish_total_worth_change({:error, error}) do
+  #   {:error, error}
+  # end
 end

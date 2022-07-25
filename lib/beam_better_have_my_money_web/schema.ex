@@ -15,6 +15,8 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema do
   import_types BEAMBetterHaveMyMoneyWeb.Schema.Queries.Wallet
   import_types BEAMBetterHaveMyMoneyWeb.Schema.Mutations.User
   import_types BEAMBetterHaveMyMoneyWeb.Schema.Mutations.Wallet
+  import_types BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.TotalWorth
+  import_types BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.User
 
   query do
     import_fields :exchange_rate_queries
@@ -26,6 +28,11 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema do
   mutation do
     import_fields :user_mutations
     import_fields :wallet_mutations
+  end
+
+  subscription do
+    import_fields :total_worth_subscriptions
+    import_fields :user_subscriptions
   end
 
   def context(ctx) do

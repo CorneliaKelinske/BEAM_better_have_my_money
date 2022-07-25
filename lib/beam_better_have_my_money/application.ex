@@ -22,9 +22,9 @@ defmodule BEAMBetterHaveMyMoney.Application do
         {Phoenix.PubSub, name: BEAMBetterHaveMyMoney.PubSub},
         # Start the Endpoint (http/https)
         BEAMBetterHaveMyMoneyWeb.Endpoint,
-        # Start a worker by calling: BEAMBetterHaveMyMoney.Worker.start_link(arg)
-        # {BEAMBetterHaveMyMoney.Worker, arg}
+        {Absinthe.Subscription, [BEAMBetterHaveMyMoneyWeb.Endpoint]},
 
+        # Start the cache for storing the exchange rates
         {ConCache,
          [
            name: :exchange_rate_cache,
@@ -32,6 +32,7 @@ defmodule BEAMBetterHaveMyMoney.Application do
            ttl_check_interval: @ttl_check_interval,
            touch_on_read: false
          ]}
+        # Start the tasks that fetch the exchange rates and store them in the cache
       ] ++ exchangers()
 
     # See https://hexdocs.pm/elixir/Supervisor.html

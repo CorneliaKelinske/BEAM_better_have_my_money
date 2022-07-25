@@ -40,6 +40,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
   def deposit_amount(%{user_id: user_id, currency: currency, cent_amount: cent_amount}, _)
       when cent_amount > 0 do
     Accounts.update_balance(%{user_id: user_id, currency: currency}, %{cent_amount: cent_amount})
+    |> maybe_publish_total_worth_change()
   end
 
   def deposit_amount(%{cent_amount: cent_amount}, _) do
@@ -97,5 +98,16 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
      ErrorMessage.bad_request("Please enter a positive integer!", %{
        cent_amount: cent_amount
      })}
+  end
+
+  defp maybe_publish_total_worth_change({:ok, %Wallet{user_id: user_id} = wallet}) do
+
+
+    Absinthe.Subscription.publish(BEAMBetterHaveMyMoneyWeb.Endpoint, wallet, total_worth_changed: "user_total_worth_change:#{user_id}")
+    {:ok, wallet}
+  end
+
+  defp maybe_publish_total_worth_change({:error, error}) do
+    {:error, error}
   end
 end

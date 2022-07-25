@@ -1,5 +1,10 @@
 defmodule BEAMBetterHaveMyMoneyWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :beam_better_have_my_money
+  use Absinthe.Phoenix.Endpoint
+
+  socket "/socket", BEAMBetterHaveMyMoneyWeb.UserSocket,
+    websocket: true,
+    longpoll: false
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
