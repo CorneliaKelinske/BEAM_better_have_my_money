@@ -62,7 +62,8 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
      })}
   end
 
-  @spec send_amount(map, resolution()) :: {:ok, transaction()} | {:error, ErrorMessage.t()} | {:error, {atom(), ErrorMessage.t()}}
+  @spec send_amount(map, resolution()) ::
+          {:ok, transaction()} | {:error, ErrorMessage.t()} | {:error, {atom(), ErrorMessage.t()}}
   def send_amount(
         %{cent_amount: cent_amount, from_currency: from_currency, to_currency: to_currency} =
           params,

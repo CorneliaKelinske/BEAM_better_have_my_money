@@ -17,7 +17,6 @@ defmodule BEAMBetterHaveMyMoney.Accounts.Wallet do
           user_id: pos_integer | nil
         }
 
-
   schema "wallets" do
     field :cent_amount, :integer
     field :currency, Ecto.Enum, values: @currencies
@@ -52,7 +51,8 @@ defmodule BEAMBetterHaveMyMoney.Accounts.Wallet do
   end
 
   @spec by_user_id_and_currency(non_neg_integer(), currency()) :: Ecto.Query.t()
-  @spec by_user_id_and_currency(Ecto.Queryable.t(), non_neg_integer(), currency()) :: Ecto.Query.t()
+  @spec by_user_id_and_currency(Ecto.Queryable.t(), non_neg_integer(), currency()) ::
+          Ecto.Query.t()
   def by_user_id_and_currency(query \\ Wallet, user_id, currency) do
     query
     |> by_user_id(user_id)
