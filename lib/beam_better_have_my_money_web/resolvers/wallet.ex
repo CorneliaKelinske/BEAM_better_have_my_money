@@ -2,7 +2,15 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
   @moduledoc false
   alias BEAMBetterHaveMyMoney.{Accounts, Accounts.Wallet}
 
+  @type currency :: Wallet.currency()
   @type resolution :: Absinthe.Resolution.t()
+  @type transaction :: %{
+          from_wallet: Wallet.t(),
+          cent_amount: non_neg_integer(),
+          from_currency: currency(),
+          to_currency: currency,
+          to_wallet: Wallet.t()
+        }
 
   @spec all(map, resolution()) :: {:ok, [Wallet.t()]} | {:error, ErrorMessage.t()}
   def all(params, _) do
@@ -29,14 +37,65 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
   end
 
   @spec deposit_amount(map, resolution()) :: {:ok, Wallet.t()} | {:error, ErrorMessage.t()}
-  def deposit_amount(%{user_id: user_id, currency: currency, cent_amount: cent_amount}, _) do
+  def deposit_amount(%{user_id: user_id, currency: currency, cent_amount: cent_amount}, _)
+      when cent_amount > 0 do
     Accounts.update_balance(%{user_id: user_id, currency: currency}, %{cent_amount: cent_amount})
   end
 
+  def deposit_amount(%{cent_amount: cent_amount}, _) do
+    {:error,
+     ErrorMessage.bad_request("Please enter a positive integer!", %{
+       cent_amount: cent_amount
+     })}
+  end
+
   @spec withdraw_amount(map, resolution()) :: {:ok, Wallet.t()} | {:error, ErrorMessage.t()}
-  def withdraw_amount(%{user_id: user_id, currency: currency, cent_amount: cent_amount}, _) do
-    Accounts.update_balance(%{user_id: user_id, currency: currency}, %{
-      cent_amount: -abs(cent_amount)
-    })
+  def withdraw_amount(%{user_id: user_id, currency: currency, cent_amount: cent_amount}, _)
+      when cent_amount > 0 do
+    Accounts.update_balance(%{user_id: user_id, currency: currency}, %{cent_amount: -cent_amount})
+  end
+
+  def withdraw_amount(%{cent_amount: cent_amount}, _) do
+    {:error,
+     ErrorMessage.bad_request("Please enter a positive integer!", %{
+       cent_amount: cent_amount
+     })}
+  end
+
+  @spec send_amount(map, resolution()) ::
+          {:ok, transaction()} | {:error, ErrorMessage.t()} | {:error, {atom(), ErrorMessage.t()}}
+  def send_amount(
+        %{cent_amount: cent_amount, from_currency: from_currency, to_currency: to_currency} =
+          params,
+        _
+      )
+      when cent_amount > 0 do
+    case Accounts.send_amount(params) do
+      {:ok,
+       %{
+         exchange_rate: exchange_rate,
+         update_from_wallet: %Wallet{} = from_wallet,
+         update_to_wallet: %Wallet{} = to_wallet
+       }} ->
+        {:ok,
+         %{
+           from_wallet: from_wallet,
+           cent_amount: cent_amount,
+           from_currency: from_currency,
+           to_currency: to_currency,
+           exchange_rate: exchange_rate,
+           to_wallet: to_wallet
+         }}
+
+      {:error, name, %ErrorMessage{} = error_message, _} ->
+        {:error, {name, error_message}}
+    end
+  end
+
+  def send_amount(%{cent_amount: cent_amount}, _) do
+    {:error,
+     ErrorMessage.bad_request("Please enter a positive integer!", %{
+       cent_amount: cent_amount
+     })}
   end
 end

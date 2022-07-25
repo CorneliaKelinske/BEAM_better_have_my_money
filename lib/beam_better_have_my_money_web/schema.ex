@@ -6,6 +6,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema do
   import_types BEAMBetterHaveMyMoneyWeb.Types.Currency
   import_types BEAMBetterHaveMyMoneyWeb.Types.ExchangeRate
   import_types BEAMBetterHaveMyMoneyWeb.Types.TotalWorth
+  import_types BEAMBetterHaveMyMoneyWeb.Types.Transaction
   import_types BEAMBetterHaveMyMoneyWeb.Types.User
   import_types BEAMBetterHaveMyMoneyWeb.Types.Wallet
   import_types BEAMBetterHaveMyMoneyWeb.Schema.Queries.ExchangeRate

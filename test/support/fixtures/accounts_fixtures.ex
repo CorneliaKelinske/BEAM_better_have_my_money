@@ -39,4 +39,13 @@ defmodule BEAMBetterHaveMyMoney.AccountsFixtures do
 
     %{wallet2: wallet2}
   end
+
+  def user2_wallet(%{user2: user}) do
+    {:ok, user2_wallet} =
+      @wallet_params
+      |> Map.merge(%{user_id: user.id})
+      |> Accounts.create_wallet()
+
+    %{user2_wallet: user2_wallet}
+  end
 end

@@ -1,9 +1,15 @@
 defmodule BEAMBetterHaveMyMoney.AccountsTest do
   use BEAMBetterHaveMyMoney.DataCase
 
-  alias BEAMBetterHaveMyMoney.{Accounts, Accounts.User, Accounts.Wallet}
+  alias BEAMBetterHaveMyMoney.{
+    Accounts,
+    Accounts.User,
+    Accounts.Wallet
+  }
 
-  import BEAMBetterHaveMyMoney.AccountsFixtures, only: [user: 1, wallet: 1]
+  import BEAMBetterHaveMyMoney.AccountsFixtures,
+    only: [user: 1, wallet: 1, wallet2: 1, user2: 1, user2_wallet: 1]
+
   @valid_user_params %{name: "Harry", email: "dresden@example.com"}
   @valid_wallet_params %{currency: :CAD, cent_amount: 1_000}
   @invalid_user_params %{email: nil, name: nil}
@@ -24,7 +30,7 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
       assert [%User{id: ^id, name: ^name, email: ^email}] = Accounts.all_users(%{name: name})
     end
 
-    test "returns an empty list when no users with matching params are found" do
+    test "returns an empty list when no users wExcghaith matching params are found" do
       assert [] = Accounts.all_users(%{name: "does not exist"})
     end
   end
@@ -304,6 +310,95 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
                 }}
 
       assert Accounts.all_wallets() === []
+    end
+  end
+
+  describe "send_amount/1" do
+    setup [:user, :wallet, :wallet2, :user2, :user2_wallet]
+
+    test "sends money between two wallets", %{
+      user: user,
+      wallet: %{
+        id: from_wallet_id,
+        cent_amount: from_wallet_cent_amount,
+        currency: from_wallet_currency
+      },
+      user2: user2,
+      user2_wallet: %{
+        id: to_wallet_id,
+        cent_amount: to_wallet_cent_amount,
+        currency: to_wallet_currency
+      }
+    } do
+      assert {:ok,
+              %{
+                cent_amount: 100,
+                exchange_rate: 1.0,
+                from_currency: :CAD,
+                to_currency: :CAD,
+                update_from_wallet: %Wallet{
+                  cent_amount: 900,
+                  currency: :CAD,
+                  id: ^from_wallet_id
+                },
+                update_to_wallet: %Wallet{
+                  cent_amount: 1100,
+                  currency: :CAD,
+                  id: ^to_wallet_id
+                }
+              }} =
+               Accounts.send_amount(%{
+                 from_user_id: user.id,
+                 from_currency: from_wallet_currency,
+                 cent_amount: 100,
+                 to_user_id: user2.id,
+                 to_currency: to_wallet_currency
+               })
+
+      from_wallet_cent_amount = from_wallet_cent_amount - 100
+      to_wallet_cent_amount = to_wallet_cent_amount + 100
+
+      assert {:ok,
+              %Wallet{currency: ^from_wallet_currency, cent_amount: ^from_wallet_cent_amount}} =
+               Accounts.find_wallet(%{id: from_wallet_id})
+
+      assert {:ok, %Wallet{currency: ^to_wallet_currency, cent_amount: ^to_wallet_cent_amount}} =
+               Accounts.find_wallet(%{id: to_wallet_id})
+    end
+
+    test "returns an error when no corresponding wallet is found", %{
+      user: user,
+      wallet: %{
+        currency: from_wallet_currency
+      },
+      user2: user2,
+      user2_wallet: %{
+        currency: to_wallet_currency
+      }
+    } do
+      assert {:error, :check_wallets_found, %ErrorMessage{code: :not_found}, _} =
+               Accounts.send_amount(%{
+                 from_user_id: user.id,
+                 from_currency: from_wallet_currency,
+                 cent_amount: 100,
+                 to_user_id: user2.id + 1,
+                 to_currency: to_wallet_currency
+               })
+    end
+
+    test "returns an error when the exchange rate is not found", %{
+      user: user,
+      wallet: %{currency: from_wallet_currency},
+      wallet2: %{currency: to_wallet_currency}
+    } do
+      assert {:error, :exchange_rate, %ErrorMessage{code: :not_found}, _} =
+               Accounts.send_amount(%{
+                 from_user_id: user.id,
+                 from_currency: from_wallet_currency,
+                 cent_amount: 100,
+                 to_user_id: user.id,
+                 to_currency: to_wallet_currency
+               })
     end
   end
 end
