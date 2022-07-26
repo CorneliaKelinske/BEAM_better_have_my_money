@@ -157,8 +157,4 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
        to_wallet: to_wallet
      }}
   end
-
-  # defp maybe_publish_total_worth_change({:error, error}) do
-  #   {:error, error}
-  # end
 end

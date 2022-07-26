@@ -212,39 +212,36 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.TotalWorthTest do
       assert_push "subscription:data", data
 
       assert %{
-        subscriptionId: ^subscription_id,
-        result: %{
-          data: %{
-            "totalWorthChanged" => %{
-              "user_id" => ^from_user_id,
-              "cent_amount" => 1_000,
-              "currency" => @currency,
-              "transaction_type" => "WITHDRAWAL"
-            }
-          }
-        }
-      } = data
-
+               subscriptionId: ^subscription_id,
+               result: %{
+                 data: %{
+                   "totalWorthChanged" => %{
+                     "user_id" => ^from_user_id,
+                     "cent_amount" => 1_000,
+                     "currency" => @currency,
+                     "transaction_type" => "WITHDRAWAL"
+                   }
+                 }
+               }
+             } = data
     end
 
     test "sends the total worth change for the recipient when @totalWorthChanged mutation is triggered when an amount is sent",
-    %{
-      socket: socket,
-      user: %{id: from_user_id},
-      user2: %{id: to_user_id},
-      wallet: %{cent_amount: from_wallet_cent_amount},
-      user2_wallet: %{cent_amount: to_wallet_cent_amount}
-    } do
-
+         %{
+           socket: socket,
+           user: %{id: from_user_id},
+           user2: %{id: to_user_id},
+           wallet: %{cent_amount: from_wallet_cent_amount},
+           user2_wallet: %{cent_amount: to_wallet_cent_amount}
+         } do
       from_user_id = to_string(from_user_id)
       to_user_id = to_string(to_user_id)
       from_wallet_cent_amount = from_wallet_cent_amount - 1000
       to_wallet_cent_amount = to_wallet_cent_amount + 1000
 
+      ref = push_doc(socket, @total_worth_changed_doc, variables: %{"userId" => to_user_id})
 
-     ref = push_doc(socket, @total_worth_changed_doc, variables: %{"userId" => to_user_id})
-
-     assert_reply ref, :ok, %{subscriptionId: subscription_id}
+      assert_reply ref, :ok, %{subscriptionId: subscription_id}
 
       ref =
         push_doc(socket, @send_amount_doc,
@@ -283,18 +280,18 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.TotalWorthTest do
       assert_push "subscription:data", data
 
       assert %{
-        subscriptionId: ^subscription_id,
-        result: %{
-          data: %{
-            "totalWorthChanged" => %{
-              "user_id" => ^to_user_id,
-              "cent_amount" => 1_000,
-              "currency" => @currency,
-              "transaction_type" => "DEPOSIT"
-            }
-          }
-        }
-      } = data
-      end
+               subscriptionId: ^subscription_id,
+               result: %{
+                 data: %{
+                   "totalWorthChanged" => %{
+                     "user_id" => ^to_user_id,
+                     "cent_amount" => 1_000,
+                     "currency" => @currency,
+                     "transaction_type" => "DEPOSIT"
+                   }
+                 }
+               }
+             } = data
+    end
   end
 end

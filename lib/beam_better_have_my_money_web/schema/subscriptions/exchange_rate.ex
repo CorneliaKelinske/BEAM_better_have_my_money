@@ -3,23 +3,21 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.ExchangeRate do
   use Absinthe.Schema.Notation
 
   object :exchange_rate_subscriptions do
-    @desc "Broadcasts exchange rate updates for all currencies"
+    @desc "Broadcasts exchange rate updates"
     field :exchange_rate_updated, :exchange_rate do
+      arg :currency, :currency
 
-      config fn _, _ -> {:ok, topic: "exchange rate update"} end
+      config fn
+        %{currency: currency}, _ ->
+
+          {:ok, topic: "exchange rate updated:#{currency}"}
+
+        _, _ ->
+
+          {:ok, topic: "exchange rate updated:all"}
+      end
+
+      resolve fn exchange_rate, _args, _res -> {:ok, exchange_rate} end
     end
-
-    @desc "Broadcasts exchange rate updates for a specific currency pair"
-    field :specific_exchange_rate_updated, :exchange_rate do
-      arg :from_currency, non_null(:currency)
-      arg :to_currency, non_null(:currency)
-
-      config fn args, _ -> {:ok, topic: key(args)} end
-
-    end
-  end
-
-  defp key(%{from_currency: from_currency, to_currency: to_currency}) do
-    "specific_exchange_rate_updated: from #{from_currency} to #{to_currency}"
   end
 end
