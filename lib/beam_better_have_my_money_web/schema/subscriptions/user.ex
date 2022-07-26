@@ -1,6 +1,7 @@
 defmodule BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.User do
   @moduledoc false
   use Absinthe.Schema.Notation
+  alias BEAMBetterHaveMyMoneyWeb.Resolvers
 
   object :user_subscriptions do
     @desc "Broadcasts newly created user"
@@ -10,6 +11,9 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.User do
       end
 
       trigger :create_user, topic: fn _ -> "new user" end
+
+
+      resolve fn user, _, _  -> Resolvers.User.find(%{id: user.id}, %{}) end
 
 
     end

@@ -11,6 +11,8 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.TotalWorth do
       config fn args, _ -> {:ok, topic: key(args)} end
 
 
+      resolve fn wallet_id, _, _  -> Resolvers.Wallet.find(%{id: wallet_id + 1}, %{}) end
+
     end
   end
 

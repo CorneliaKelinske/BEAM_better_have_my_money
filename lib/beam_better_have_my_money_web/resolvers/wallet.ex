@@ -101,9 +101,9 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
   end
 
   defp maybe_publish_total_worth_change({:ok, %Wallet{user_id: user_id} = wallet}) do
+ wallet_id = wallet.id
 
-
-    Absinthe.Subscription.publish(BEAMBetterHaveMyMoneyWeb.Endpoint, wallet, total_worth_changed: "user_total_worth_change:#{user_id}")
+    Absinthe.Subscription.publish(BEAMBetterHaveMyMoneyWeb.Endpoint, wallet_id, total_worth_changed: "user_total_worth_change:#{user_id}")
     {:ok, wallet}
   end
 
