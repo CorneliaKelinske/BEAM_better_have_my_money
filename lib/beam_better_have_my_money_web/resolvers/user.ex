@@ -11,8 +11,6 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.User do
 
   @spec find(map, resolution()) :: {:ok, User.t()} | {:error, ErrorMessage.t()}
   def find(params, _) do
-    IO.puts("HIT")
-    IO.inspect(params)
     Accounts.find_user(params)
   end
 
@@ -23,7 +21,6 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.User do
   @spec create_user(map, resolution()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   def create_user(params, _) do
     Accounts.create_user(params)
-
   end
 
   @spec update_user(%{id: String.t()}, resolution()) ::
@@ -33,7 +30,4 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.User do
     |> String.to_integer()
     |> Accounts.update_user(Map.delete(params, :id))
   end
-
-
-  
 end
