@@ -16,6 +16,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema do
   import_types BEAMBetterHaveMyMoneyWeb.Schema.Queries.Wallet
   import_types BEAMBetterHaveMyMoneyWeb.Schema.Mutations.User
   import_types BEAMBetterHaveMyMoneyWeb.Schema.Mutations.Wallet
+  import_types BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.ExchangeRate
   import_types BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.TotalWorth
   import_types BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.User
 
@@ -32,6 +33,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema do
   end
 
   subscription do
+    import_fields :exchange_rate_subscriptions
     import_fields :total_worth_subscriptions
     import_fields :user_subscriptions
   end

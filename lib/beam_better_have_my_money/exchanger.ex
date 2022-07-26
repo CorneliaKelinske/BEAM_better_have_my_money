@@ -35,9 +35,17 @@ defmodule BEAMBetterHaveMyMoney.Exchanger do
            to_currency
          ) do
       {:ok, data} ->
-        data
-        |> ExchangeRate.new(from_currency, to_currency)
-        |> ExchangeRateStorage.store_exchange_rate(cache_name)
+
+        exchange_rate = ExchangeRate.new(data, from_currency, to_currency)
+        ExchangeRateStorage.store_exchange_rate(exchange_rate, cache_name)
+
+      Absinthe.Subscription.publish(BEAMBetterHaveMyMoneyWeb.Endpoint, exchange_rate,
+      exchange_rate_updated: "exchange rate update"
+    )
+
+    Absinthe.Subscription.publish(BEAMBetterHaveMyMoneyWeb.Endpoint, exchange_rate,
+    specific_exchange_rate_updated: "specific_exchange_rate_updated: from #{from_currency} to #{to_currency}"
+    )
 
       error ->
         Logger.error(
