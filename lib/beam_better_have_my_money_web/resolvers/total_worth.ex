@@ -1,6 +1,6 @@
 defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.TotalWorth do
   @moduledoc false
-  alias BEAMBetterHaveMyMoney.{Accounts, Accounts.Wallet, Config, ExchangeRateStorage}
+  alias BEAMBetterHaveMyMoney.{Accounts, Accounts.Wallet}
 
   @type resolution :: Absinthe.Resolution.t()
   @type currency :: Wallet.currency()
@@ -10,11 +10,10 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.TotalWorth do
   @spec get_total_worth(params(), resolution()) ::
           {:ok, total_worth()} | {:error, ErrorMessage.t()}
   def get_total_worth(%{user_id: user_id, currency: target_currency}, _) do
+    case Accounts.get_total_worth(%{user_id: user_id, currency: target_currency}) do
+      {:ok, net_worth, _} ->
+        {:ok, %{user_id: user_id, currency: target_currency, cent_amount: net_worth}}
 
-    with {:ok, net_worth, _} <- Accounts.get_total_worth(%{user_id: user_id, currency: target_currency}) do
-
-      {:ok, %{user_id: user_id, currency: target_currency, cent_amount: net_worth}}
-    else
       [] ->
         {:error,
          ErrorMessage.not_found("No wallets found for this User Id.", %{user_id: user_id})}
@@ -23,6 +22,4 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.TotalWorth do
         error
     end
   end
-
-  
 end

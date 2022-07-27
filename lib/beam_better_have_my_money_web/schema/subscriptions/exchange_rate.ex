@@ -9,15 +9,11 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.ExchangeRate do
 
       config fn
         %{currency: currency}, _ ->
-
           {:ok, topic: "exchange rate updated:#{currency}"}
 
         _, _ ->
-
           {:ok, topic: "exchange rate updated:all"}
       end
-
-      resolve fn exchange_rate, _args, _res -> {:ok, exchange_rate} end
     end
   end
 end

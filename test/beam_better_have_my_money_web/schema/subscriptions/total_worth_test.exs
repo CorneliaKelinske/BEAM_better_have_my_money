@@ -7,23 +7,23 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.TotalWorthTest do
   @currency "CAD"
 
   @deposit_amount_doc """
-    mutation DepositAmount($user_id: ID!, $currency: Currency!, $cent_amount: Int!){
+  mutation DepositAmount($user_id: ID!, $currency: Currency!, $cent_amount: Int!) {
     depositAmount (user_id: $user_id, currency: $currency, cent_amount: $cent_amount) {
-    id
-    user_id
-    currency
-    cent_amount
-    user {
       id
-      email
-      name
+      user_id
+      currency
+      cent_amount
+      user {
+        id
+        email
+        name
       }
     }
   }
   """
 
   @withdraw_amount_doc """
-    mutation WithdrawAmount($user_id: ID!, $currency: Currency!, $cent_amount: Int!){
+  mutation WithdrawAmount($user_id: ID!, $currency: Currency!, $cent_amount: Int!){
     withdrawAmount (user_id: $user_id, currency: $currency, cent_amount: $cent_amount) {
     id
     user_id
@@ -39,7 +39,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.TotalWorthTest do
   """
 
   @send_amount_doc """
-    mutation SendAmount($from_user_id: ID!, $from_currency: Currency!, $cent_amount: Int!, $to_user_id: ID!, $to_currency: Currency!){
+  mutation SendAmount($from_user_id: ID!, $from_currency: Currency!, $cent_amount: Int!, $to_user_id: ID!, $to_currency: Currency!){
     sendAmount (from_user_id: $from_user_id, from_currency: $from_currency, cent_amount: $cent_amount
       to_user_id: $to_user_id, to_currency: $to_currency) {
         from_wallet {
@@ -64,12 +64,12 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.TotalWorthTest do
 
   @total_worth_changed_doc """
   subscription TotalWorthChanged($userId: ID!) {
-   totalWorthChanged(user_id: $userId) {
-     user_id
-     cent_amount
-     currency
-     transaction_type
-   }
+    totalWorthChanged(user_id: $userId) {
+      user_id
+      cent_amount
+      currency
+      transaction_type
+    }
   }
   """
 

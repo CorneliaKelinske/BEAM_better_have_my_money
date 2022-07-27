@@ -1,7 +1,6 @@
 defmodule BEAMBetterHaveMyMoney.Accounts.AccountsHelpers do
   @moduledoc """
-  All the functions used in the Ecto.Multi in send_amount/1
-  in the accounts context module.
+  Home of the helper functions called in the accounts context module.
   """
   alias BEAMBetterHaveMyMoney.{Accounts.Wallet, Config, ExchangeRateStorage}
 
@@ -67,17 +66,19 @@ defmodule BEAMBetterHaveMyMoney.Accounts.AccountsHelpers do
     )
   end
 
-
-  @spec reduce_wallets(BEAMBetterHaveMyMoney.Accounts.Wallet.t(), {:ok, {:ok, integer(), currency()}, currency() }) ::
+  @spec reduce_wallets(
+          BEAMBetterHaveMyMoney.Accounts.Wallet.t(),
+          {:ok, {:ok, integer(), currency()}, currency()}
+        ) ::
           {:cont, {:ok, integer(), currency()}} | {:halt, {:error, ErrorMessage.t()}}
   def reduce_wallets(%Wallet{currency: currency, cent_amount: cent_amount}, {:ok, acc, currency}) do
     {:cont, {:ok, acc + cent_amount, currency}}
   end
 
   def reduce_wallets(
-         %Wallet{currency: currency, cent_amount: cent_amount},
-         {:ok, acc, target_currency}
-       ) do
+        %Wallet{currency: currency, cent_amount: cent_amount},
+        {:ok, acc, target_currency}
+      ) do
     case ExchangeRateStorage.get_exchange_rate(currency, target_currency, cache_name()) do
       {:ok, exchange_rate} ->
         {:cont, {:ok, acc + round(cent_amount * exchange_rate), target_currency}}

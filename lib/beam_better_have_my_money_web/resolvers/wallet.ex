@@ -74,10 +74,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
 
   @spec send_amount(map, resolution()) ::
           {:ok, transaction()} | {:error, ErrorMessage.t()} | {:error, {atom(), ErrorMessage.t()}}
-  def send_amount(
-        %{cent_amount: cent_amount} = params,
-        _
-      )
+  def send_amount(%{cent_amount: cent_amount} = params, _)
       when cent_amount > 0 do
     case Accounts.send_amount(params) do
       {:ok,

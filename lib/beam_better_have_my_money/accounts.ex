@@ -5,7 +5,12 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
 
   import Ecto.Query, warn: false
 
-  alias BEAMBetterHaveMyMoney.{Accounts.AccountsHelpers, Accounts.User, Accounts.Wallet, Config, ExchangeRateStorage, Repo}
+  alias BEAMBetterHaveMyMoney.{
+    Accounts.AccountsHelpers,
+    Accounts.User,
+    Accounts.Wallet,
+    Repo
+  }
 
   alias EctoShorts.Actions
 
@@ -115,15 +120,13 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
     end
   end
 
-
-  @spec get_total_worth(total_worth_params()) ::  {:ok, integer(), currency()} | {:error, ErrorMessage.t()}
+  @spec get_total_worth(total_worth_params()) ::
+          {:ok, integer(), currency()} | {:error, ErrorMessage.t()} | []
   def get_total_worth(%{user_id: user_id, currency: target_currency}) do
     acc = {:ok, 0, target_currency}
+
     with [_ | _] = wallets <- all_wallets(%{user_id: user_id}) do
-         Enum.reduce_while(wallets, acc, &AccountsHelpers.reduce_wallets/2)
+      Enum.reduce_while(wallets, acc, &AccountsHelpers.reduce_wallets/2)
     end
-
   end
-
-
-  end
+end
