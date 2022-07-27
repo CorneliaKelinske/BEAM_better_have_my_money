@@ -3,6 +3,8 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.ExchangeRateTest do
 
   alias BEAMBetterHaveMyMoney.Exchanger
 
+ 
+
   @exchange_rate_updated_doc """
   subscription ExchangeRateUpdated{
    exchangeRateUpdated{
@@ -19,9 +21,20 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.ExchangeRateTest do
 
       assert_reply ref, :ok, %{subscriptionId: subscription_id}
 
-      assert_push("subscription:data", data, 10_000)
+      assert_push("subscription:data", data, 1_000)
 
-      assert nil = data
+      assert %{
+        subscriptionId: ^subscription_id,
+        result: %{
+          data: %{
+            "exchangeRateUpdated" => %{
+              "from_currency" => "USD",
+              "to_currency" => "CAD",
+              "rate" => 1.11
+            }
+          }
+        }
+      } = data
     end
   end
 end

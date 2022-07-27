@@ -1,9 +1,9 @@
-defmodule BEAMBetterHaveMyMoney.Accounts.AmountTransfer do
+defmodule BEAMBetterHaveMyMoney.Accounts.AccountsHelpers do
   @moduledoc """
   All the functions used in the Ecto.Multi in send_amount/1
   in the accounts context module.
   """
-  alias BEAMBetterHaveMyMoney.{Accounts.Wallet, ExchangeRateStorage}
+  alias BEAMBetterHaveMyMoney.{Accounts.Wallet, Config, ExchangeRateStorage}
 
   @type currency :: Wallet.currency()
 
@@ -65,5 +65,32 @@ defmodule BEAMBetterHaveMyMoney.Accounts.AmountTransfer do
     Ecto.Changeset.change(to_wallet,
       cent_amount: to_wallet_cent_amount + round(cent_amount * exchange_rate)
     )
+  end
+
+
+  @spec reduce_wallets(BEAMBetterHaveMyMoney.Accounts.Wallet.t(), {:ok, {:ok, integer(), currency()}, currency() }) ::
+          {:cont, {:ok, integer(), currency()}} | {:halt, {:error, ErrorMessage.t()}}
+  def reduce_wallets(%Wallet{currency: currency, cent_amount: cent_amount}, {:ok, acc, currency}) do
+    {:cont, {:ok, acc + cent_amount, currency}}
+  end
+
+  def reduce_wallets(
+         %Wallet{currency: currency, cent_amount: cent_amount},
+         {:ok, acc, target_currency}
+       ) do
+    case ExchangeRateStorage.get_exchange_rate(currency, target_currency, cache_name()) do
+      {:ok, exchange_rate} ->
+        {:cont, {:ok, acc + round(cent_amount * exchange_rate), target_currency}}
+
+      {:error, error} ->
+        {:halt, {:error, error}}
+    end
+  end
+
+  defp cache_name do
+    case Config.env() do
+      :test -> :test_cache
+      _ -> :exchange_rate_cache
+    end
   end
 end
