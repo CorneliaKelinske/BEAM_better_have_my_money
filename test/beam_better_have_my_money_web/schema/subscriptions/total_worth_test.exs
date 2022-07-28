@@ -25,14 +25,14 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.TotalWorthTest do
   @withdraw_amount_doc """
   mutation WithdrawAmount($user_id: ID!, $currency: Currency!, $cent_amount: Int!){
     withdrawAmount (user_id: $user_id, currency: $currency, cent_amount: $cent_amount) {
-    id
-    user_id
-    currency
-    cent_amount
-    user {
       id
-      email
-      name
+      user_id
+      currency
+      cent_amount
+      user {
+        id
+        email
+        name
       }
     }
   }
@@ -47,7 +47,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.TotalWorthTest do
           user_id
           currency
           cent_amount
-          },
+        },
         cent_amount
         from_currency
         to_currency
@@ -57,8 +57,8 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.TotalWorthTest do
           user_id
           currency
           cent_amount
-          }
         }
+      }
   }
   """
 

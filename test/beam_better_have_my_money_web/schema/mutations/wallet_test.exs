@@ -9,16 +9,16 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
   @currency "CAD"
 
   @create_wallet_doc """
-    mutation CreateWallet($user_id: ID!, $currency: Currency!, $cent_amount: Int!){
+  mutation CreateWallet($user_id: ID!, $currency: Currency!, $cent_amount: Int!){
     createWallet (user_id: $user_id, currency: $currency, cent_amount: $cent_amount) {
-    id
-    user_id
-    currency
-    cent_amount
-    user {
       id
-      email
-      name
+      user_id
+      currency
+      cent_amount
+      user {
+        id
+        email
+        name
       }
     }
   }
@@ -56,14 +56,14 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
   @deposit_amount_doc """
     mutation DepositAmount($user_id: ID!, $currency: Currency!, $cent_amount: Int!){
     depositAmount (user_id: $user_id, currency: $currency, cent_amount: $cent_amount) {
-    id
-    user_id
-    currency
-    cent_amount
-    user {
       id
-      email
-      name
+      user_id
+      currency
+      cent_amount
+      user {
+        id
+        email
+        name
       }
     }
   }
@@ -128,14 +128,14 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
   @withdraw_amount_doc """
     mutation WithdrawAmount($user_id: ID!, $currency: Currency!, $cent_amount: Int!){
     withdrawAmount (user_id: $user_id, currency: $currency, cent_amount: $cent_amount) {
-    id
-    user_id
-    currency
-    cent_amount
-    user {
       id
-      email
-      name
+      user_id
+      currency
+      cent_amount
+      user {
+        id
+        email
+        name
       }
     }
   }
@@ -198,26 +198,26 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
   end
 
   @send_amount_doc """
-    mutation SendAmount($from_user_id: ID!, $from_currency: Currency!, $cent_amount: Int!, $to_user_id: ID!, $to_currency: Currency!){
+  mutation SendAmount($from_user_id: ID!, $from_currency: Currency!, $cent_amount: Int!, $to_user_id: ID!, $to_currency: Currency!){
     sendAmount (from_user_id: $from_user_id, from_currency: $from_currency, cent_amount: $cent_amount
-      to_user_id: $to_user_id, to_currency: $to_currency) {
-        from_wallet {
-          id
-          user_id
-          currency
-          cent_amount
-          },
+    to_user_id: $to_user_id, to_currency: $to_currency) {
+      from_wallet {
+        id
+        user_id
+        currency
         cent_amount
-        from_currency
-        to_currency
-        exchange_rate
-        to_wallet {
-          id
-          user_id
-          currency
-          cent_amount
-          }
-        }
+      },
+      cent_amount
+      from_currency
+      to_currency
+      exchange_rate
+      to_wallet {
+        id
+        user_id
+        currency
+        cent_amount
+      }
+    }
   }
   """
 
