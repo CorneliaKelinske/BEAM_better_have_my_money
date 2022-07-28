@@ -414,29 +414,33 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
   describe "get_total_worth/1" do
     setup [:user, :wallet, :wallet2, :user2]
 
-    test "returns a tuple with the total worth of a user and a currency", %{user: %{id: id}, wallet: %{currency: currency}} do
-
+    test "returns a tuple with the total worth of a user and a currency", %{
+      user: %{id: id},
+      wallet: %{currency: currency}
+    } do
       assert {:ok, 2110, ^currency} = Accounts.get_total_worth(%{user_id: id, currency: currency})
     end
 
-    test "returns error message when exchange rate is not available", %{user: %{id: id}, wallet: %{currency: wallet1_currency}, wallet2: %{currency: currency}} do
+    test "returns error message when exchange rate is not available", %{
+      user: %{id: id},
+      wallet: %{currency: wallet1_currency},
+      wallet2: %{currency: currency}
+    } do
       assert {:error,
-      %ErrorMessage{
-        code: :not_found,
-        details: %{
-          from_currency: ^wallet1_currency, to_currency: ^currency
-        },
-        message: "Exchange rate currently not available. Please try again!"
-      }} = Accounts.get_total_worth(%{user_id: id, currency: currency})
+              %ErrorMessage{
+                code: :not_found,
+                details: %{
+                  from_currency: ^wallet1_currency,
+                  to_currency: ^currency
+                },
+                message: "Exchange rate currently not available. Please try again!"
+              }} = Accounts.get_total_worth(%{user_id: id, currency: currency})
     end
 
-
-    test "returns an empty list when the given user does not have any wallets", %{user2: %{id: id}} do
+    test "returns an empty list when the given user does not have any wallets", %{
+      user2: %{id: id}
+    } do
       assert Accounts.get_total_worth(%{user_id: id, currency: :CAD}) === []
     end
-
   end
-
-
-
 end
