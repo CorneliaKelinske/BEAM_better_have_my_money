@@ -8,6 +8,7 @@ defmodule BEAMBetterHaveMyMoney.Accounts.Wallet do
 
   @currencies Config.currencies()
   @required_params [:currency, :cent_amount, :user_id]
+  @transaction_types [:withdrawal, :deposit]
 
   @type currency :: atom
   @type t :: %__MODULE__{
@@ -64,4 +65,7 @@ defmodule BEAMBetterHaveMyMoney.Accounts.Wallet do
   def lock_for_update(query \\ Wallet) do
     lock(query, "FOR UPDATE")
   end
+
+  @spec transaction_types() :: [atom()]
+  def transaction_types do @transaction_types end
 end

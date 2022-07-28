@@ -2,6 +2,8 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
   @moduledoc false
   alias BEAMBetterHaveMyMoney.{Accounts, Accounts.Wallet}
 
+  @transaction_types Wallet.transaction_types()
+
   @type currency :: Wallet.currency()
   @type resolution :: Absinthe.Resolution.t()
   @type transaction :: %{
@@ -47,7 +49,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
         user_id: user_id,
         cent_amount: cent_amount,
         currency: currency,
-        transaction_type: :DEPOSIT
+        transaction_type: :deposit
       })
 
       {:ok, wallet}
@@ -72,7 +74,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
         user_id: user_id,
         cent_amount: cent_amount,
         currency: currency,
-        transaction_type: :WITHDRAWAL
+        transaction_type: :withdrawal
       })
 
       {:ok, wallet}
@@ -97,19 +99,19 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
          update_from_wallet: %Wallet{user_id: from_user_id, currency: from_currency} = from_wallet,
          update_to_wallet: %Wallet{user_id: to_user_id, currency: to_currency} = to_wallet
        }} ->
-        
+
         publish_total_worth_change(%{
           user_id: from_user_id,
           cent_amount: cent_amount,
           currency: from_currency,
-          transaction_type: :WITHDRAWAL
+          transaction_type: :withdrawal
         })
 
         publish_total_worth_change(%{
           user_id: to_user_id,
           cent_amount: round(cent_amount * exchange_rate),
           currency: to_currency,
-          transaction_type: :DEPOSIT
+          transaction_type: :deposit
         })
 
         {:ok,
@@ -141,7 +143,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
          cent_amount: cent_amount,
          currency: currency,
          transaction_type: transaction_type
-       }) do
+       }) when transaction_type in @transaction_types do
     Absinthe.Subscription.publish(
       BEAMBetterHaveMyMoneyWeb.Endpoint,
       %{

@@ -1,6 +1,7 @@
 defmodule BEAMBetterHaveMyMoneyWeb.Types.TotalWorthChange do
   @moduledoc false
   use Absinthe.Schema.Notation
+  @transaction_types BEAMBetterHaveMyMoney.Accounts.Wallet.transaction_types()
 
   @desc "The change in the total worth of a user after a given transaction in the transaction's currency"
   object :total_worth_change do
@@ -11,8 +12,6 @@ defmodule BEAMBetterHaveMyMoneyWeb.Types.TotalWorthChange do
   end
 
   @desc "The type of activity leading to a total worth change"
-  enum :transaction_type do
-    value :DEPOSIT
-    value :WITHDRAWAL
-  end
+  enum :transaction_type, values: @transaction_types
+
 end
