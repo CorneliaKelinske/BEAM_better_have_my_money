@@ -279,8 +279,8 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.WalletTest do
                    %{
                      code: :not_found,
                      message: "One of the wallets was not found",
-                     name: :check_wallets_found,
-                     path: ["sendAmount"]
+                     path: ["sendAmount"],
+                     details: %{operation: :check_wallets_found}
                    }
                  ]
                }

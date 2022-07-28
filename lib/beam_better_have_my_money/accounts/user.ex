@@ -9,7 +9,9 @@ defmodule BEAMBetterHaveMyMoney.Accounts.User do
   @type t :: %__MODULE__{
           id: pos_integer | nil,
           name: String.t() | nil,
-          email: String.t() | nil
+          email: String.t() | nil,
+          inserted_at: NaiveDateTime.t() | nil,
+          updated_at: NaiveDateTime.t() | nil
         }
 
   schema "users" do

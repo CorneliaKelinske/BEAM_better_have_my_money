@@ -45,12 +45,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
            Accounts.update_balance(%{user_id: user_id, currency: currency}, %{
              cent_amount: cent_amount
            }) do
-      publish_total_worth_change(%{
-        user_id: user_id,
-        cent_amount: cent_amount,
-        currency: currency,
-        transaction_type: :deposit
-      })
+      publish_total_worth_change(user_id, cent_amount, currency, :deposit)
 
       {:ok, wallet}
     end
@@ -70,12 +65,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
            Accounts.update_balance(%{user_id: user_id, currency: currency}, %{
              cent_amount: -cent_amount
            }) do
-      publish_total_worth_change(%{
-        user_id: user_id,
-        cent_amount: cent_amount,
-        currency: currency,
-        transaction_type: :withdrawal
-      })
+      publish_total_worth_change(user_id, cent_amount, currency, :withdrawal)
 
       {:ok, wallet}
     end
@@ -88,45 +78,39 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
      })}
   end
 
-  @spec send_amount(map, resolution()) ::
-          {:ok, transaction()} | {:error, ErrorMessage.t()} | {:error, {atom(), ErrorMessage.t()}}
+  @spec send_amount(map, resolution()) :: {:ok, transaction()} | {:error, ErrorMessage.t()}
   def send_amount(%{cent_amount: cent_amount} = params, _)
       when cent_amount > 0 do
     case Accounts.send_amount(params) do
       {:ok,
        %{
          exchange_rate: exchange_rate,
-         update_from_wallet: %Wallet{user_id: from_user_id, currency: from_currency} = from_wallet,
+         update_from_wallet:
+           %Wallet{user_id: from_user_id, currency: from_currency} = from_wallet,
          update_to_wallet: %Wallet{user_id: to_user_id, currency: to_currency} = to_wallet
        }} ->
+        publish_total_worth_change(from_user_id, cent_amount, from_currency, :withdrawal)
 
-        publish_total_worth_change(%{
-          user_id: from_user_id,
-          cent_amount: cent_amount,
-          currency: from_currency,
-          transaction_type: :withdrawal
-        })
-
-        publish_total_worth_change(%{
-          user_id: to_user_id,
-          cent_amount: round(cent_amount * exchange_rate),
-          currency: to_currency,
-          transaction_type: :deposit
-        })
+        publish_total_worth_change(
+          to_user_id,
+          round(cent_amount * exchange_rate),
+          to_currency,
+          :deposit
+        )
 
         {:ok,
-     %{
-       from_wallet: from_wallet,
-       cent_amount: cent_amount,
-       from_currency: from_currency,
-       to_currency: to_currency,
-       exchange_rate: exchange_rate,
-       to_wallet: to_wallet
-     }}
+         %{
+           from_wallet: from_wallet,
+           cent_amount: cent_amount,
+           from_currency: from_currency,
+           to_currency: to_currency,
+           exchange_rate: exchange_rate,
+           to_wallet: to_wallet
+         }}
 
-
-      {:error, name, %ErrorMessage{} = error_message, _} ->
-        {:error, {name, error_message}}
+      {:error, name, %ErrorMessage{details: details} = error_message, _} ->
+        details = Map.put(details || %{}, :operation, name)
+        {:error, %ErrorMessage{error_message | details: details}}
     end
   end
 
@@ -137,13 +121,8 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.Wallet do
      })}
   end
 
-
-  defp publish_total_worth_change(%{
-         user_id: user_id,
-         cent_amount: cent_amount,
-         currency: currency,
-         transaction_type: transaction_type
-       }) when transaction_type in @transaction_types do
+  defp publish_total_worth_change(user_id, cent_amount, currency, transaction_type)
+       when transaction_type in @transaction_types do
     Absinthe.Subscription.publish(
       BEAMBetterHaveMyMoneyWeb.Endpoint,
       %{

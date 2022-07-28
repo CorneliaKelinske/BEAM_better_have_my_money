@@ -13,12 +13,6 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
 
   @currencies {:USD, :CAD}
 
-  setup do
-    start_supervised!({ConCache, name: :test_cache, ttl_check_interval: 20, global_ttl: 3_000})
-    Exchanger.start_link(@currencies, :test_cache)
-    :ok
-  end
-
   @valid_user_params %{name: "Harry", email: "dresden@example.com"}
   @valid_wallet_params %{currency: :CAD, cent_amount: 1_000}
   @invalid_user_params %{email: nil, name: nil}
@@ -412,7 +406,7 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
   end
 
   describe "get_total_worth/1" do
-    setup [:user, :wallet, :wallet2, :user2]
+    setup [:user, :wallet, :wallet2, :user2, :test_cache]
 
     test "returns a tuple with the total worth of a user and a currency", %{
       user: %{id: id},
@@ -437,10 +431,21 @@ defmodule BEAMBetterHaveMyMoney.AccountsTest do
               }} = Accounts.get_total_worth(%{user_id: id, currency: currency})
     end
 
-    test "returns an empty list when the given user does not have any wallets", %{
+    test "returns an error the given user does not have any wallets", %{
       user2: %{id: id}
     } do
-      assert Accounts.get_total_worth(%{user_id: id, currency: :CAD}) === []
+      assert {:error,
+              %ErrorMessage{
+                code: :not_found,
+                details: %{user_id: ^id},
+                message: "No wallets found for this User Id."
+              }} = Accounts.get_total_worth(%{user_id: id, currency: :CAD})
     end
+  end
+
+  defp test_cache(_) do
+    start_supervised!({ConCache, name: :test_cache, ttl_check_interval: 20, global_ttl: 3_000})
+    Exchanger.start_link(@currencies, :test_cache)
+    :ok
   end
 end

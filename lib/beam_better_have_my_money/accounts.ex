@@ -121,12 +121,16 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
   end
 
   @spec get_total_worth(total_worth_params()) ::
-          {:ok, integer(), currency()} | {:error, ErrorMessage.t()} | []
+          {:ok, integer(), currency()} | {:error, ErrorMessage.t()}
   def get_total_worth(%{user_id: user_id, currency: target_currency}) do
-    acc = {:ok, 0, target_currency}
+    case all_wallets(%{user_id: user_id}) do
+      [] ->
+        {:error,
+         ErrorMessage.not_found("No wallets found for this User Id.", %{user_id: user_id})}
 
-    with [_ | _] = wallets <- all_wallets(%{user_id: user_id}) do
-      Enum.reduce_while(wallets, acc, &AccountsHelpers.reduce_wallets/2)
+      wallets ->
+        acc = {:ok, 0, target_currency}
+        Enum.reduce_while(wallets, acc, &AccountsHelpers.reduce_wallets/2)
     end
   end
 end

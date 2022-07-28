@@ -15,7 +15,9 @@ defmodule BEAMBetterHaveMyMoney.Accounts.Wallet do
           id: pos_integer | nil,
           cent_amount: integer | nil,
           currency: currency | nil,
-          user_id: pos_integer | nil
+          user_id: pos_integer | nil,
+          inserted_at: NaiveDateTime.t() | nil,
+          updated_at: NaiveDateTime.t() | nil
         }
 
   schema "wallets" do
@@ -67,5 +69,7 @@ defmodule BEAMBetterHaveMyMoney.Accounts.Wallet do
   end
 
   @spec transaction_types() :: [atom()]
-  def transaction_types do @transaction_types end
+  def transaction_types do
+    @transaction_types
+  end
 end

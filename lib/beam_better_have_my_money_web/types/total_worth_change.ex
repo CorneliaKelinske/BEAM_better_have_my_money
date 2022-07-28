@@ -13,5 +13,4 @@ defmodule BEAMBetterHaveMyMoneyWeb.Types.TotalWorthChange do
 
   @desc "The type of activity leading to a total worth change"
   enum :transaction_type, values: @transaction_types
-
 end

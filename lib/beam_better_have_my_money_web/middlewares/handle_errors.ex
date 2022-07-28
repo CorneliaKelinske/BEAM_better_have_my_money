@@ -15,11 +15,8 @@ defmodule BEAMBetterHaveMyMoneyWeb.Middlewares.HandleErrors do
     |> Enum.map(fn {k, v} -> "#{k}: #{v}" end)
   end
 
-  defp handle_error(%ErrorMessage{message: message, code: code}),
-    do: [%{message: message, code: code}]
-
-  defp handle_error({name, %ErrorMessage{message: message, code: code}}) do
-    [%{name: name, message: message, code: code}]
+  defp handle_error(%ErrorMessage{message: message, code: code, details: details}) do
+    [%{message: message, code: code, details: details}]
   end
 
   defp handle_error(error), do: [error]
