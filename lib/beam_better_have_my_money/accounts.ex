@@ -5,7 +5,12 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
 
   import Ecto.Query, warn: false
 
-  alias BEAMBetterHaveMyMoney.{Accounts.AmountTransfer, Accounts.User, Accounts.Wallet, Repo}
+  alias BEAMBetterHaveMyMoney.{
+    Accounts.AccountsHelpers,
+    Accounts.User,
+    Accounts.Wallet,
+    Repo
+  }
 
   alias EctoShorts.Actions
 
@@ -18,6 +23,7 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
           to_user_id: non_neg_integer(),
           to_currency: currency()
         }
+  @type total_worth_params :: %{user_id: non_neg_integer(), currency: currency}
 
   @spec all_users(map) :: [User.t()]
   def all_users(params \\ %{}) do
@@ -95,12 +101,12 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
     |> Ecto.Multi.put(:to_user_id, to_user_id)
     |> Ecto.Multi.put(:to_currency, to_currency)
     |> Ecto.Multi.put(:cent_amount, cent_amount)
-    |> Ecto.Multi.one(:find_from_wallet, &AmountTransfer.find_and_lock_from_wallet/1)
-    |> Ecto.Multi.one(:find_to_wallet, &AmountTransfer.find_and_lock_to_wallet/1)
-    |> Ecto.Multi.run(:check_wallets_found, &AmountTransfer.check_wallets_found/2)
-    |> Ecto.Multi.run(:exchange_rate, &AmountTransfer.exchange_rate/2)
-    |> Ecto.Multi.update(:update_from_wallet, &AmountTransfer.update_from_wallet/1)
-    |> Ecto.Multi.update(:update_to_wallet, &AmountTransfer.update_to_wallet/1)
+    |> Ecto.Multi.one(:find_from_wallet, &AccountsHelpers.find_and_lock_from_wallet/1)
+    |> Ecto.Multi.one(:find_to_wallet, &AccountsHelpers.find_and_lock_to_wallet/1)
+    |> Ecto.Multi.run(:check_wallets_found, &AccountsHelpers.check_wallets_found/2)
+    |> Ecto.Multi.run(:exchange_rate, &AccountsHelpers.exchange_rate/2)
+    |> Ecto.Multi.update(:update_from_wallet, &AccountsHelpers.update_from_wallet/1)
+    |> Ecto.Multi.update(:update_to_wallet, &AccountsHelpers.update_to_wallet/1)
     |> Repo.transaction()
   end
 
@@ -111,6 +117,20 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
   def delete_wallet(%Wallet{user_id: user_id, currency: currency}) do
     with {:ok, wallet} <- find_wallet(%{user_id: user_id, currency: currency}) do
       Actions.delete(wallet)
+    end
+  end
+
+  @spec get_total_worth(total_worth_params()) ::
+          {:ok, integer(), currency()} | {:error, ErrorMessage.t()}
+  def get_total_worth(%{user_id: user_id, currency: target_currency}) do
+    case all_wallets(%{user_id: user_id}) do
+      [] ->
+        {:error,
+         ErrorMessage.not_found("No wallets found for this User Id.", %{user_id: user_id})}
+
+      wallets ->
+        acc = {:ok, 0, target_currency}
+        Enum.reduce_while(wallets, acc, &AccountsHelpers.reduce_wallets/2)
     end
   end
 end

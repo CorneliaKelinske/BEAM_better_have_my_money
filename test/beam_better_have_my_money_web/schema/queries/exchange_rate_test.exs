@@ -21,7 +21,6 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Queries.ExchangeRateTest do
       from_currency
       to_currency
       rate
-
     }
   }
   """

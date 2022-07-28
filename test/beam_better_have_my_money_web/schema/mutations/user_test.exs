@@ -5,11 +5,11 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.UserTest do
   alias BEAMBetterHaveMyMoneyWeb.Schema
 
   @create_user_doc """
-    mutation CreateUser($name: String!, $email: String!){
+  mutation CreateUser($name: String!, $email: String!){
     createUser (name: $name, email: $email) {
-     id
-     name
-     email
+      id
+      name
+      email
     }
   }
   """
@@ -39,11 +39,11 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Mutations.UserTest do
   end
 
   @update_user_doc """
-    mutation UpdateUser($id: ID!, $name: String!, $email: String!){
+  mutation UpdateUser($id: ID!, $name: String!, $email: String!){
     updateUser (id: $id, name: $name, email: $email) {
-    id
-    name
-    email
+      id
+      name
+      email
     }
   }
   """

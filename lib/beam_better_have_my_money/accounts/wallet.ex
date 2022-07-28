@@ -8,13 +8,16 @@ defmodule BEAMBetterHaveMyMoney.Accounts.Wallet do
 
   @currencies Config.currencies()
   @required_params [:currency, :cent_amount, :user_id]
+  @transaction_types [:withdrawal, :deposit]
 
   @type currency :: atom
   @type t :: %__MODULE__{
           id: pos_integer | nil,
           cent_amount: integer | nil,
           currency: currency | nil,
-          user_id: pos_integer | nil
+          user_id: pos_integer | nil,
+          inserted_at: NaiveDateTime.t() | nil,
+          updated_at: NaiveDateTime.t() | nil
         }
 
   schema "wallets" do
@@ -63,5 +66,10 @@ defmodule BEAMBetterHaveMyMoney.Accounts.Wallet do
   @spec lock_for_update(Ecto.Queryable.t()) :: Ecto.Query.t()
   def lock_for_update(query \\ Wallet) do
     lock(query, "FOR UPDATE")
+  end
+
+  @spec transaction_types() :: [atom()]
+  def transaction_types do
+    @transaction_types
   end
 end
