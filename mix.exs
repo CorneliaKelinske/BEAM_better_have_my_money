@@ -58,7 +58,7 @@ defmodule BEAMBetterHaveMyMoney.MixProject do
       {:absinthe_phoenix, "~> 2.0"},
       {:dataloader, "~> 1.0.0"},
       {:con_cache, "~> 1.0"},
-      {:ecto_shorts, "~> 2.1.2"},
+      {:ecto_shorts, "~> 2.2.1"},
 
       # tooling
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},

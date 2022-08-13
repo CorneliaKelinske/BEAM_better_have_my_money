@@ -14,10 +14,6 @@ defmodule BEAMBetterHaveMyMoneyWeb.Resolvers.User do
     Accounts.find_user(params)
   end
 
-  def find(%{user_id: id}, _, _) do
-    Accounts.find_user(%{id: id})
-  end
-
   @spec create_user(map, resolution()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   def create_user(params, _) do
     Accounts.create_user(params)
