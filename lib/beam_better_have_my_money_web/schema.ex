@@ -53,7 +53,7 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema do
     middleware ++ [HandleErrors]
   end
 
-  def middleware(middleware, _field, _) do
+  def middleware(middleware, _, _) do
     middleware
   end
 end
