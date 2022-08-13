@@ -42,9 +42,7 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
 
   @spec update_user(pos_integer, map) :: {:ok, User.t()} | {:error, error | Ecto.Changeset.t()}
   def update_user(id, params) do
-    with {:ok, user} <- find_user(%{id: id}) do
-      Actions.update(User, user, params)
-    end
+    Actions.find_and_update(User, %{id: id}, params)
   end
 
   @spec delete_user(User.t()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
@@ -72,9 +70,7 @@ defmodule BEAMBetterHaveMyMoney.Accounts do
   """
   @spec update_wallet(Wallet.t(), map()) :: {:ok, Wallet.t()} | {:error, error()}
   def update_wallet(%Wallet{user_id: user_id, currency: currency}, params) do
-    with {:ok, wallet} <- find_wallet(%{user_id: user_id, currency: currency}) do
-      Actions.update(Wallet, wallet, params)
-    end
+    Actions.find_and_update(Wallet, %{user_id: user_id, currency: currency}, params)
   end
 
   @spec update_balance(%{user_id: non_neg_integer(), currency: currency()}, %{

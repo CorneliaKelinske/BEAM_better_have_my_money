@@ -39,11 +39,11 @@ defmodule BEAMBetterHaveMyMoney.Exchanger do
         ExchangeRateStorage.store_exchange_rate(exchange_rate, cache_name)
 
         Absinthe.Subscription.publish(BEAMBetterHaveMyMoneyWeb.Endpoint, exchange_rate,
-          exchange_rate_updated: "exchange rate updated:all"
+          exchange_rate_updated: "exchange_rate_updated:all"
         )
 
         Absinthe.Subscription.publish(BEAMBetterHaveMyMoneyWeb.Endpoint, exchange_rate,
-          exchange_rate_updated: "exchange rate updated:#{from_currency}"
+          exchange_rate_updated: "exchange_rate_updated:#{from_currency}"
         )
 
       error ->

@@ -48,7 +48,12 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema do
     [Absinthe.Middleware.Dataloader] ++ Absinthe.Plugin.defaults()
   end
 
-  def middleware(middleware, _field, _) do
+  def middleware(middleware, _, %{identifier: identifier})
+      when identifier in [:query, :subscription, :mutation] do
     middleware ++ [HandleErrors]
+  end
+
+  def middleware(middleware, _field, _) do
+    middleware
   end
 end

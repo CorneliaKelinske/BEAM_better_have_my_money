@@ -6,10 +6,10 @@ defmodule BEAMBetterHaveMyMoneyWeb.Schema.Subscriptions.User do
     @desc "Broadcasts newly created user"
     field :created_user, :user do
       config fn _map, _resolution ->
-        {:ok, topic: "new user"}
+        {:ok, topic: "new_user"}
       end
 
-      trigger :create_user, topic: fn _ -> "new user" end
+      trigger :create_user, topic: fn _ -> "new_user" end
     end
   end
 end
