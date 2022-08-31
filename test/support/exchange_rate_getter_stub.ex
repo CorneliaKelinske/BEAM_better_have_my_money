@@ -1,4 +1,4 @@
-defmodule BEAMBetterHaveMyMoney.Exchanger.ExchangeRateGetterStub do
+defmodule BEAMBetterHaveMyMoney.ExchangeRateGetterStub do
   @moduledoc """
   Is called in tests instead of the Exchange Rate Getter and returns
   a fixed set of data for further processing
